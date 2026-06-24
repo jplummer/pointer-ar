@@ -11,6 +11,7 @@ final class LocationService: NSObject, ObservableObject, @unchecked Sendable {
   @Published private(set) var authorizationStatus: CLAuthorizationStatus
   @Published private(set) var lastLocation: CLLocation?
   @Published private(set) var lastError: Error?
+  @Published private(set) var lastHeading: CLHeading?
 
   private let manager = CLLocationManager()
 
@@ -30,6 +31,7 @@ final class LocationService: NSObject, ObservableObject, @unchecked Sendable {
       manager.requestWhenInUseAuthorization()
     case .authorizedAlways, .authorizedWhenInUse:
       manager.startUpdatingLocation()
+      manager.startUpdatingHeading()
     default:
       break
     }
@@ -37,6 +39,7 @@ final class LocationService: NSObject, ObservableObject, @unchecked Sendable {
 
   func stop() {
     manager.stopUpdatingLocation()
+    manager.stopUpdatingHeading()
   }
 
   var isAuthorized: Bool {
@@ -53,6 +56,7 @@ extension LocationService: CLLocationManagerDelegate {
       switch status {
       case .authorizedAlways, .authorizedWhenInUse:
         self.manager.startUpdatingLocation()
+        self.manager.startUpdatingHeading()
       default:
         break
       }
@@ -65,6 +69,12 @@ extension LocationService: CLLocationManagerDelegate {
       guard let self else { return }
       self.lastLocation = fix
       self.lastError = nil
+    }
+  }
+
+  nonisolated func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+    Task { @MainActor [weak self] in
+      self?.lastHeading = newHeading
     }
   }
 

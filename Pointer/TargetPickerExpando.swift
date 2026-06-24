@@ -1,36 +1,47 @@
 import SwiftUI
 
-/// Selected catalog row drives ground aim (`ArrowSceneView` + Core Location).
+/// Catalog selection: **ground** (WGS84) or **celestial** (Sun, fixed stars, …).
 final class AimSession: ObservableObject {
   enum AimMode: Equatable {
     case ground(GroundTarget)
+    case celestial(CelestialTarget)
 
     var title: String {
       switch self {
       case .ground(let t): return t.displayName
+      case .celestial(let t): return t.displayName
       }
     }
 
     var caption: String {
       switch self {
       case .ground(let t): return t.notes
+      case .celestial(let t): return t.notes
+      }
+    }
+
+    /// Stable id for `ScrollViewReader.scrollTo`.
+    var pickableId: String {
+      switch self {
+      case .ground(let g): return "ground:\(g.id)"
+      case .celestial(let c): return "cel:\(c.id)"
       }
     }
   }
 
-  /// Convenience for UI that always uses a catalog row (no alternate aim modes yet).
-  var selectedGroundTarget: GroundTarget {
-    switch aimMode {
-    case .ground(let t): return t
+  @Published var pickerExpanded = false
+  @Published var aimMode: AimMode {
+    didSet {
+      UserDefaults.standard.set(aimMode.pickableId, forKey: Self.lastTargetKey)
     }
   }
 
-  @Published var pickerExpanded = false
-  @Published var aimMode: AimMode
+  let groundCatalog: [GroundTarget]
+  let celestialCatalog: [CelestialTarget]
 
-  let catalog: [GroundTarget]
+  private static let lastTargetKey = "pointer.lastSelectedTarget"
 
-  private static let groupOrder = [
+  private static let groundGroupOrder = [
     "seven_ancient_wonders",
     "new7_wonders_winner",
     "new7_finalist",
@@ -38,23 +49,84 @@ final class AimSession: ObservableObject {
   ]
 
   init() {
-    catalog = GroundTargetsBundle.loadTargets()
-    guard let first = catalog.first else {
-      preconditionFailure("GroundTargets.json must contain at least one catalog entry.")
+    groundCatalog = GroundTargetsBundle.loadTargets()
+    celestialCatalog = CelestialTargetsBundle.loadTargets()
+
+    let defaultMode: AimMode
+    if let firstGround = groundCatalog.first {
+      defaultMode = .ground(firstGround)
+    } else if let firstCelestial = celestialCatalog.first {
+      defaultMode = .celestial(firstCelestial)
+    } else {
+      preconditionFailure("Both GroundTargets.json and CelestialTargets.json failed to load any targets.")
     }
-    aimMode = .ground(first)
+
+    if let savedId = UserDefaults.standard.string(forKey: Self.lastTargetKey),
+       let restored = Self.findTarget(pickableId: savedId, ground: groundCatalog, celestial: celestialCatalog) {
+      aimMode = restored
+    } else {
+      aimMode = defaultMode
+    }
   }
 
-  var groupedCatalog: [(key: String, title: String, targets: [GroundTarget])] {
-    let grouped = Dictionary(grouping: catalog, by: \.group)
-    return Self.groupOrder.compactMap { key in
+  private static func findTarget(pickableId: String, ground: [GroundTarget], celestial: [CelestialTarget]) -> AimMode? {
+    if pickableId.hasPrefix("ground:") {
+      let id = String(pickableId.dropFirst("ground:".count))
+      if let target = ground.first(where: { $0.id == id }) {
+        return .ground(target)
+      }
+    } else if pickableId.hasPrefix("cel:") {
+      let id = String(pickableId.dropFirst("cel:".count))
+      if let target = celestial.first(where: { $0.id == id }) {
+        return .celestial(target)
+      }
+    }
+    return nil
+  }
+
+  private static let celestialGroupOrder = [
+    "celestial_sky",
+    "celestial_orbit",
+  ]
+
+  var celestialSections: [(key: String, title: String, targets: [CelestialTarget])] {
+    guard !celestialCatalog.isEmpty else { return [] }
+    let grouped = Dictionary(grouping: celestialCatalog, by: \.group)
+    return Self.celestialGroupOrder.compactMap { key in
+      guard let list = grouped[key], !list.isEmpty else { return nil }
+      let sorted = list.sorted {
+        $0.displayName.localizedCaseInsensitiveCompare($1.displayName) == .orderedAscending
+      }
+      return (key, Self.celestialSectionTitle(key), sorted)
+    }
+  }
+
+  private static func celestialSectionTitle(_ key: String) -> String {
+    switch key {
+    case "celestial_sky": return "Sky"
+    case "celestial_orbit": return "Satellites & spacecraft"
+    default:
+      return key.replacingOccurrences(of: "_", with: " ").capitalized
+    }
+  }
+
+  /// Celestial entries grouped under **More places** (same `seed_plan` key as ground seeds).
+  var morePlacesCelestialTargets: [CelestialTarget] {
+    celestialCatalog
+      .filter { $0.group == "seed_plan" }
+      .sorted { $0.displayName.localizedCaseInsensitiveCompare($1.displayName) == .orderedAscending }
+  }
+
+  var groupedGroundCatalog: [(key: String, title: String, targets: [GroundTarget])] {
+    let grouped = Dictionary(grouping: groundCatalog, by: \.group)
+    return Self.groundGroupOrder.compactMap { key in
       guard let list = grouped[key], !list.isEmpty else { return nil }
       let sorted = list.sorted { $0.displayName.localizedCaseInsensitiveCompare($1.displayName) == .orderedAscending }
-      return (key, Self.groupSectionTitle(key), sorted)
+      return (key, Self.groundSectionTitle(key), sorted)
     }
   }
 
-  private static func groupSectionTitle(_ key: String) -> String {
+  private static func groundSectionTitle(_ key: String) -> String {
     switch key {
     case "seven_ancient_wonders": return "Seven ancient wonders"
     case "new7_wonders_winner": return "New 7 Wonders · winners"
@@ -111,13 +183,23 @@ struct TargetPickerExpando: View {
         ScrollViewReader { proxy in
           ScrollView {
             VStack(alignment: .leading, spacing: 18) {
-              ForEach(session.groupedCatalog, id: \.key) { section in
-                catalogSection(title: section.title, targets: section.targets)
+              ForEach(session.celestialSections, id: \.key) { section in
+                celestialSection(title: section.title, targets: section.targets)
+              }
+              ForEach(session.groupedGroundCatalog, id: \.key) { section in
+                if section.key == "seed_plan" {
+                  morePlacesSection(
+                    title: section.title,
+                    celestialExtras: session.morePlacesCelestialTargets,
+                    groundTargets: section.targets
+                  )
+                } else {
+                  groundSection(title: section.title, targets: section.targets)
+                }
               }
             }
             .padding(.bottom, 6)
             .onAppear {
-              // LazyVStack omitted: distant rows must exist before scrollTo(…) or reopening leaves you at the top.
               scrollSelectionIntoView(proxy: proxy)
             }
           }
@@ -140,9 +222,8 @@ struct TargetPickerExpando: View {
   }
 
   private func scrollSelectionIntoView(proxy: ScrollViewProxy) {
-    let id = session.selectedGroundTarget.id
+    let id = session.aimMode.pickableId
     Task { @MainActor in
-      // One layout pass so ScrollView has resolved content size after expand.
       try? await Task.sleep(for: .milliseconds(32))
       withAnimation(.easeInOut(duration: 0.28)) {
         proxy.scrollTo(id, anchor: .center)
@@ -150,19 +231,80 @@ struct TargetPickerExpando: View {
     }
   }
 
-  private func catalogSection(title: String, targets: [GroundTarget]) -> some View {
+  private func celestialSection(title: String, targets: [CelestialTarget]) -> some View {
     VStack(alignment: .leading, spacing: 8) {
       sectionHeader(title)
       ForEach(targets) { target in
         selectRow(
           title: target.displayName,
           subtitle: nil,
-          selected: session.selectedGroundTarget.id == target.id
+          selected: {
+            if case .celestial(let t) = session.aimMode { return t.id == target.id }
+            return false
+          }()
+        ) {
+          session.aimMode = .celestial(target)
+          session.pickerExpanded = false
+        }
+        .id("cel:\(target.id)")
+      }
+    }
+  }
+
+  private func morePlacesSection(
+    title: String,
+    celestialExtras: [CelestialTarget],
+    groundTargets: [GroundTarget]
+  ) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      sectionHeader(title)
+      ForEach(celestialExtras) { target in
+        selectRow(
+          title: target.displayName,
+          subtitle: nil,
+          selected: {
+            if case .celestial(let t) = session.aimMode { return t.id == target.id }
+            return false
+          }()
+        ) {
+          session.aimMode = .celestial(target)
+          session.pickerExpanded = false
+        }
+        .id("cel:\(target.id)")
+      }
+      ForEach(groundTargets) { target in
+        selectRow(
+          title: target.displayName,
+          subtitle: nil,
+          selected: {
+            if case .ground(let t) = session.aimMode { return t.id == target.id }
+            return false
+          }()
         ) {
           session.aimMode = .ground(target)
           session.pickerExpanded = false
         }
-        .id(target.id)
+        .id("ground:\(target.id)")
+      }
+    }
+  }
+
+  private func groundSection(title: String, targets: [GroundTarget]) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      sectionHeader(title)
+      ForEach(targets) { target in
+        selectRow(
+          title: target.displayName,
+          subtitle: nil,
+          selected: {
+            if case .ground(let t) = session.aimMode { return t.id == target.id }
+            return false
+          }()
+        ) {
+          session.aimMode = .ground(target)
+          session.pickerExpanded = false
+        }
+        .id("ground:\(target.id)")
       }
     }
   }

@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "targets": [
+    {
+      "id": "sky.sun",
+      "displayName": "Sun",
+      "group": "celestial_sky",
+      "kind": "sun",
+      "notes": "Approximate apparent position; UTC + your GPS + simplified ephemeris (~arcmin-level)",
+      "sources": ["https://github.com/jplummer/pointer"]
+    },
+    {
+      "id": "sky.moon",
+      "displayName": "Moon",
+      "group": "celestial_sky",
+      "kind": "moon",
+      "notes": "Low-precision geocentric Moon (~tens of arcminutes class), without parallax refraction",
+      "sources": ["https://github.com/jplummer/pointer"]
+    },
+    {
+      "id": "bear.magnetic_north",
+      "displayName": "Magnetic north",
+      "group": "seed_plan",
+      "kind": "magnetic_north",
+      "notes": "WMM-2025 field direction at your GPS + altitude (declination, dip/inclination, full vector)",
+      "sources": ["https://www.ncei.noaa.gov/products/world-magnetic-model"]
+    },
+    {
+      "id": "sky.polaris",
+      "displayName": "Polaris",
+      "group": "celestial_sky",
+      "kind": "fixed_star",
+      "raHours": 2.53030104,
+      "decDegrees": 89.26413889,
+      "notes": "ICRS-style J2000-ish coordinates without nutation/precession/refraction",
+      "sources": ["https://simbad.u-strasbg.fr/simbad/sim-id?Ident=Polaris"]
+    },
+    {
+      "id": "sky.sirius",
+      "displayName": "Sirius",
+      "group": "celestial_sky",
+      "kind": "fixed_star",
+      "raHours": 6.752481,
+      "decDegrees": -16.716116,
+      "notes": "Bright star anchor; coordinates rounded from catalog.",
+      "sources": ["https://simbad.u-strasbg.fr/simbad/sim-id?Ident=*%20alp%20CMa"]
+    },
+    {
+      "id": "orbit.iss",
+      "displayName": "International Space Station",
+      "group": "celestial_orbit",
+      "kind": "satellite",
+      "satelliteRoute": "iss",
+      "notes": "Live latitude/longitude/altitude from api.wheretheiss.at",
+      "sources": ["https://wheretheiss.at/w/developer"]
+    },
+    {
+      "id": "orbit.hubble",
+      "displayName": "Hubble Space Telescope",
+      "group": "celestial_orbit",
+      "kind": "satellite",
+      "satelliteRoute": "hubble",
+      "notes": "CelesTrak GP elements + simplified Kepler propagation (~km-class vs SGP4)",
+      "sources": ["https://celestrak.org"]
+    },
+    {
+      "id": "orbit.webb",
+      "displayName": "James Webb Space Telescope",
+      "group": "celestial_orbit",
+      "kind": "satellite",
+      "satelliteRoute": "jwst",
+      "notes": "NASA/JPL Horizons observer azimuth/elevation at your site. Halo orbit around Sun–Earth L2",
+      "sources": ["https://ssd.jpl.nasa.gov/api/horizons.api"]
+    }
+  ]
+}

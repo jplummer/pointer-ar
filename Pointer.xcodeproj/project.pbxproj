@@ -22,6 +22,15 @@
 		e8c3a4b52f604d8e9b7c2d11 /* Geodesy.swift in Sources */ = {isa = PBXBuildFile; fileRef = f2a1b3c4d5e6479081726354 /* Geodesy.swift */; };
 		f6c748cf9eaf473b85b4770c /* CameraPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = b879f2a7ae0444c7b1fdbf4e /* CameraPreviewView.swift */; };
 		fd8bd5a3f0e348a3b556a2cc /* GroundTargetsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99a388feac7e4150afe70c22 /* GroundTargetsModel.swift */; };
+		d1eadbeef002400182003002 /* CelestialTargets.json in Resources */ = {isa = PBXBuildFile; fileRef = d1eadbeef001400182003001 /* CelestialTargets.json */; };
+		d1eadbeef004400182003004 /* CelestialTargetsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = d1eadbeef003400182003003 /* CelestialTargetsModel.swift */; };
+		d1eadbeef006400182003006 /* TopocentricAstronomy.swift in Sources */ = {isa = PBXBuildFile; fileRef = d1eadbeef005400182003005 /* TopocentricAstronomy.swift */; };
+		e9a100014002400182003012 /* WorldMagneticModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = e9a100014001400182003011 /* WorldMagneticModel.swift */; };
+		e9a100014004400182003014 /* LunarEphemeris.swift in Sources */ = {isa = PBXBuildFile; fileRef = e9a100014003400182003013 /* LunarEphemeris.swift */; };
+		e9a100014006400182003016 /* TLEKeplerPropagator.swift in Sources */ = {isa = PBXBuildFile; fileRef = e9a100014005400182003015 /* TLEKeplerPropagator.swift */; };
+		e9a100014008400182003018 /* SatelliteAimServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = e9a100014007400182003017 /* SatelliteAimServices.swift */; };
+		e9a100014010400182003020 /* WMM_2025.COF in Resources */ = {isa = PBXBuildFile; fileRef = e9a100014009400182003019 /* WMM_2025.COF */; };
+		a1b2c3d4e5f6400182003021 /* PointerDisplaySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = a1b2c3d4e5f6400182003020 /* PointerDisplaySettings.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +50,15 @@
 		df8921e1ddec4df49ff6b8f1 /* PointerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointerApp.swift; sourceTree = "<group>"; };
 		f2a1b3c4d5e6479081726354 /* Geodesy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Geodesy.swift; sourceTree = "<group>"; };
 		ffcd5b1871dd422ba7fa0e88 /* ArrowSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrowSceneView.swift; sourceTree = "<group>"; };
+		d1eadbeef001400182003001 /* CelestialTargets.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = CelestialTargets.json; sourceTree = "<group>"; };
+		d1eadbeef003400182003003 /* CelestialTargetsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelestialTargetsModel.swift; sourceTree = "<group>"; };
+		d1eadbeef005400182003005 /* TopocentricAstronomy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopocentricAstronomy.swift; sourceTree = "<group>"; };
+		e9a100014001400182003011 /* WorldMagneticModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldMagneticModel.swift; sourceTree = "<group>"; };
+		e9a100014003400182003013 /* LunarEphemeris.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LunarEphemeris.swift; sourceTree = "<group>"; };
+		e9a100014005400182003015 /* TLEKeplerPropagator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TLEKeplerPropagator.swift; sourceTree = "<group>"; };
+		e9a100014007400182003017 /* SatelliteAimServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteAimServices.swift; sourceTree = "<group>"; };
+		e9a100014009400182003019 /* WMM_2025.COF */ = {isa = PBXFileReference; lastKnownFileType = text; path = WMM_2025.COF; sourceTree = "<group>"; };
+		a1b2c3d4e5f6400182003020 /* PointerDisplaySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointerDisplaySettings.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,9 +87,18 @@
 				5a07aba7641a4d39927803e1 /* TargetPickerExpando.swift */,
 				86569905754e4a41aac08048 /* LocationService.swift */,
 				9eb8d4f71a264e528201b284 /* PointerInfoSheet.swift */,
+				a1b2c3d4e5f6400182003020 /* PointerDisplaySettings.swift */,
 				f2a1b3c4d5e6479081726354 /* Geodesy.swift */,
+				d1eadbeef005400182003005 /* TopocentricAstronomy.swift */,
+				e9a100014001400182003011 /* WorldMagneticModel.swift */,
+				e9a100014003400182003013 /* LunarEphemeris.swift */,
+				e9a100014005400182003015 /* TLEKeplerPropagator.swift */,
+				e9a100014007400182003017 /* SatelliteAimServices.swift */,
+				d1eadbeef003400182003003 /* CelestialTargetsModel.swift */,
 				bcc7b015f3654231802c9f4e /* Assets.xcassets */,
 				4ede4131ee0346bfa3948b96 /* GroundTargets.json */,
+				d1eadbeef001400182003001 /* CelestialTargets.json */,
+				e9a100014009400182003019 /* WMM_2025.COF */,
 			);
 			path = Pointer;
 			sourceTree = "<group>";
@@ -164,6 +191,8 @@
 			files = (
 				2da6cdaa30f04ffc93166645 /* Assets.xcassets in Resources */,
 				0e5e8f66e36649c48121e5c0 /* GroundTargets.json in Resources */,
+				d1eadbeef002400182003002 /* CelestialTargets.json in Resources */,
+				e9a100014010400182003020 /* WMM_2025.COF in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -182,7 +211,14 @@
 				cbea96023cb04776b5095909 /* TargetPickerExpando.swift in Sources */,
 				2eb85327fad8442dacac1347 /* LocationService.swift in Sources */,
 				1f0593c94aff435d908d1fa7 /* PointerInfoSheet.swift in Sources */,
+				a1b2c3d4e5f6400182003021 /* PointerDisplaySettings.swift in Sources */,
 				e8c3a4b52f604d8e9b7c2d11 /* Geodesy.swift in Sources */,
+				d1eadbeef004400182003004 /* CelestialTargetsModel.swift in Sources */,
+				d1eadbeef006400182003006 /* TopocentricAstronomy.swift in Sources */,
+				e9a100014002400182003012 /* WorldMagneticModel.swift in Sources */,
+				e9a100014004400182003014 /* LunarEphemeris.swift in Sources */,
+				e9a100014006400182003016 /* TLEKeplerPropagator.swift in Sources */,
+				e9a100014008400182003018 /* SatelliteAimServices.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -200,11 +236,11 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Pointer;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Pointer shows the camera behind the arrow so you can see the scene you are pointing through.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Pointer uses your location to compute directions toward the selected ground target.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Pointer uses your location to compute directions toward the selected ground or sky target.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -295,11 +331,11 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Pointer;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Pointer shows the camera behind the arrow so you can see the scene you are pointing through.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Pointer uses your location to compute directions toward the selected ground target.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Pointer uses your location to compute directions toward the selected ground or sky target.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

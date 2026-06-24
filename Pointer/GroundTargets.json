@@ -161,11 +161,11 @@
     },
     {
       "id": "finalist.easter_island",
-      "displayName": "Easter Island (Ahu Tongariki)",
+      "displayName": "Easter Island",
       "group": "new7_finalist",
       "latitude": -27.126667,
       "longitude": -109.276944,
-      "notes": "Moai platform row; Rapa Nui has many valid anchors.",
+      "notes": "Ahu Tongariki Moai platform row",
       "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Ahu_Tongariki"]
     },
     {
@@ -174,7 +174,7 @@
       "group": "new7_finalist",
       "latitude": 48.858370,
       "longitude": 2.294481,
-      "notes": "South pillar publicly cited coordinates vary slightly by datum rounding.",
+      "notes": "South pillar",
       "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Eiffel_Tower"]
     },
     {
@@ -183,7 +183,7 @@
       "group": "new7_finalist",
       "latitude": 41.008583,
       "longitude": 28.979930,
-      "notes": "Historic mosque/museum/church building.",
+      "notes": "Historic mosque/museum/church",
       "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Hagia_Sophia"]
     },
     {
@@ -192,16 +192,16 @@
       "group": "new7_finalist",
       "latitude": 34.994858,
       "longitude": 135.785046,
-      "notes": "Main hall terrace area.",
+      "notes": "Main hall terrace",
       "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Kiyomizu-dera"]
     },
     {
       "id": "finalist.kremlin",
-      "displayName": "Moscow Kremlin (Alexander Garden vicinity)",
+      "displayName": "Moscow Kremlin",
       "group": "new7_finalist",
       "latitude": 55.752023,
       "longitude": 37.617499,
-      "notes": "Large fortified complex; pick a stable visitor landmark for v1.",
+      "notes": "Alexander garden vicinity",
       "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Moscow_Kremlin"]
     },
     {
@@ -210,7 +210,7 @@
       "group": "new7_finalist",
       "latitude": 47.557575,
       "longitude": 10.749800,
-      "notes": "Palace near Füssen.",
+      "notes": "Palace near Füssen",
       "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Neuschwanstein_Castle"]
     },
     {
@@ -219,7 +219,7 @@
       "group": "new7_finalist",
       "latitude": 40.689247,
       "longitude": -74.044502,
-      "notes": "Pedestal / island visitor coordinates commonly cited.",
+      "notes": "Pedestal/visitor coordinates",
       "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Statue_of_Liberty"]
     },
     {
@@ -228,7 +228,7 @@
       "group": "new7_finalist",
       "latitude": 51.178882,
       "longitude": -1.826215,
-      "notes": "Inner monument cluster approximations vary by source.",
+      "notes": "Inner monument cluster",
       "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Stonehenge"]
     },
     {
@@ -237,43 +237,43 @@
       "group": "new7_finalist",
       "latitude": -33.856784,
       "longitude": 151.215297,
-      "notes": "Sails / podium publicly cited.",
+      "notes": "Sails/podium",
       "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Sydney_Opera_House"]
     },
     {
       "id": "finalist.timbuktu",
-      "displayName": "Timbuktu (Great Mosque of Djingareyber)",
+      "displayName": "Timbuktu",
       "group": "new7_finalist",
       "latitude": 16.771944,
       "longitude": -3.008611,
-      "notes": "Historic core; security and access conditions change—verify before field use.",
+      "notes": "Great Mosque of Djingareyber",
       "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Great_Mosque_of_Djingareyber"]
     },
     {
       "id": "seed.greenwich_prime_meridian",
-      "displayName": "Greenwich Prime Meridian (Royal Observatory)",
+      "displayName": "Greenwich Prime Meridian",
       "group": "seed_plan",
       "latitude": 51.476853,
       "longitude": -0.000504,
-      "notes": "Airy transit circle definition differs from modern WGS84 zero line in the park.",
+      "notes": "Royal Observatory",
       "sources": ["https://www.rmg.co.uk/royal-observatory"]
     },
     {
       "id": "seed.mecca_kaaba",
-      "displayName": "Kaaba (Masjid al-Haram)",
+      "displayName": "Kaaba",
       "group": "seed_plan",
       "latitude": 21.422477,
       "longitude": 39.826158,
-      "notes": "High-stakes religious direction use needs specialized validation beyond this starter JSON.",
+      "notes": "Masjid al-Haram",
       "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Kaaba"]
     },
     {
       "id": "seed.jerusalem_temple_mount",
-      "displayName": "Jerusalem (Temple Mount approximate)",
+      "displayName": "Jerusalem",
       "group": "seed_plan",
       "latitude": 31.778061,
       "longitude": 35.235253,
-      "notes": "Sensitive site; coordinates are approximate plaza-scale.",
+      "notes": "Temple Mount",
       "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Temple_Mount"]
     },
     {
@@ -282,34 +282,34 @@
       "group": "seed_plan",
       "latitude": 90.0,
       "longitude": 0.0,
-      "notes": "Longitude is arbitrary at the pole; implementation should treat this as geodetic north.",
+      "notes": "Longitude is arbitrary at the pole",
       "sources": ["https://en.wikipedia.org/wiki/North_Pole"]
     },
     {
       "id": "seed.geographic_south_pole",
-      "displayName": "Geographic South Pole (Amundsen–Scott Station area)",
+      "displayName": "Geographic South Pole",
       "group": "seed_plan",
       "latitude": -90.0,
       "longitude": 0.0,
-      "notes": "Longitude arbitrary; station moves with ice sheet.",
+      "notes": "Amundsen–Scott Station area moves with ice sheet",
       "sources": ["https://en.wikipedia.org/wiki/Amundsen%E2%80%93Scott_South_Pole_Station"]
     },
     {
       "id": "seed.challenger_deep",
-      "displayName": "Challenger Deep (deepest seabed)",
+      "displayName": "Challenger Deep",
       "group": "seed_plan",
       "latitude": 11.373333,
       "longitude": 142.215,
-      "notes": "Mariana Trench depression; coordinates follow the commonly cited Challenger Deep locale (horizontal aim only — the floor is ~11 km below the ellipsoid along the local vertical through this geographic position).",
-      "sources": ["https://en.wikipedia.org/wiki/Challenger_Deep"]
+      "sources": ["https://en.wikipedia.org/wiki/Challenger_Deep"],
+      "notes": "Mariana Trench depression"
     },
     {
       "id": "seed.mount_everest_summit",
-      "displayName": "Mount Everest (summit)",
+      "displayName": "Mount Everest summit",
       "group": "seed_plan",
       "latitude": 27.988056,
       "longitude": 86.925278,
-      "notes": "Nepal/China border region; summit coordinates vary slightly by survey.",
+      "notes": "Nepal/China border region; summit coordinates vary slightly by survey",
       "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Mount_Everest"]
     }
   ]
