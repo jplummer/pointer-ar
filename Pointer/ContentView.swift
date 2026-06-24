@@ -256,7 +256,6 @@ struct ContentView: View {
 
   private func headingUnreliable(computedAzDeg: Double) -> Bool {
     guard let heading = location.lastHeading else { return false }
-    print("[HEADING] accuracy=\(String(format: "%.1f", heading.headingAccuracy))°")
     return heading.headingAccuracy < 0 || heading.headingAccuracy > 50
   }
 

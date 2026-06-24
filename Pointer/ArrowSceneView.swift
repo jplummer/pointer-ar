@@ -274,6 +274,8 @@ struct ArrowSceneView: UIViewRepresentable {
         lastResolvedAimENU = nil
         currentDisplayENU = nil
         targetENU = nil
+        transitionPhase = .none
+        wasShowingWait = false
       }
 
       let (_, _, rawENU) = Self.twistFrameAndAimENU(
@@ -324,7 +326,11 @@ struct ArrowSceneView: UIViewRepresentable {
       }
       wasShowingWait = effectiveShowWait
 
-      let inTransition = transitionPhase == .windDown || transitionPhase == .fadeIn
+      var inTransition = transitionPhase == .windDown || transitionPhase == .fadeIn
+      if inTransition && transitionStart > 0 && (CACurrentMediaTime() - transitionStart) > 3.0 {
+        transitionPhase = .resolved
+        inTransition = false
+      }
       let showArrow: Bool
       let showSpinner: Bool
       let showBezel: Bool
