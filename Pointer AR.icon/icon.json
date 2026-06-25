@@ -1,0 +1,118 @@
+{
+  "fill-specializations" : [
+    {
+      "value" : {
+        "linear-gradient" : [
+          "display-p3:0.96863,0.78039,0.92157,1.00000",
+          "srgb:0.98824,0.87451,0.81961,1.00000"
+        ],
+        "orientation" : {
+          "start" : {
+            "x" : 0.5,
+            "y" : 0
+          },
+          "stop" : {
+            "x" : 0.5,
+            "y" : 0.7
+          }
+        }
+      }
+    },
+    {
+      "appearance" : "dark",
+      "value" : {
+        "linear-gradient" : [
+          "display-p3:0.11765,0.18039,0.41961,1.00000",
+          "srgb:0.07843,0.21961,0.27843,1.00000"
+        ],
+        "orientation" : {
+          "start" : {
+            "x" : 0.5,
+            "y" : 0
+          },
+          "stop" : {
+            "x" : 0.5,
+            "y" : 0.7
+          }
+        }
+      }
+    }
+  ],
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "glass" : false,
+          "image-name" : "Polygon 2.png",
+          "name" : "Polygon 2",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              154.07600000000002,
+              -272.677
+            ]
+          }
+        },
+        {
+          "blend-mode-specializations" : [
+            {
+              "value" : "plus-lighter"
+            },
+            {
+              "appearance" : "dark",
+              "value" : "normal"
+            }
+          ],
+          "fill-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : {
+                "linear-gradient" : [
+                  "srgb:0.92143,0.92145,0.92144,1.00000",
+                  "srgb:1.00000,1.00000,1.00000,1.00000"
+                ],
+                "orientation" : {
+                  "start" : {
+                    "x" : 0.7617856822262118,
+                    "y" : 0.565504434954008
+                  },
+                  "stop" : {
+                    "x" : 0.44124876570915617,
+                    "y" : 0.4543739323258871
+                  }
+                }
+              }
+            }
+          ],
+          "image-name" : "Polygon 1.png",
+          "name" : "Polygon 1",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              -24.923999999999978,
+              -28.17700000000002
+            ]
+          }
+        },
+        {
+          "image-name" : "Group 1.svg",
+          "name" : "Group 1"
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

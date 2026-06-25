@@ -435,14 +435,18 @@ struct ContentView: View {
 
   private var brandedCoverView: some View {
     ZStack {
-      Color.black
+      LinearGradient(
+        colors: [Color(red: 1.0, green: 0.773, blue: 0.929), Color(red: 0.988, green: 0.875, blue: 0.820)],
+        startPoint: .top,
+        endPoint: .bottom
+      )
       VStack(spacing: 12) {
         Image(systemName: "arrow.up.right")
           .font(.system(size: 48, weight: .light))
-          .foregroundStyle(.white.opacity(0.9))
-        Text("Pointer")
+          .foregroundStyle(.black.opacity(0.7))
+        Text("Pointer AR")
           .font(.title2.weight(.medium))
-          .foregroundStyle(.white.opacity(0.9))
+          .foregroundStyle(.black.opacity(0.7))
       }
     }
     .ignoresSafeArea()
