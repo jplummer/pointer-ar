@@ -97,7 +97,7 @@ struct ContentView: View {
           overlaySettings: overlaySettings,
           previewRotation: previewRotationSync,
           sceneRenderingReady: arrowSceneReady,
-          arrowDirectionReady: aimReady,
+
           orientationRingShowsWait: orientationRingShowsWait,
           spinnerDuration: waitReason.spinnerDuration,
           isSceneReady: $arrowSceneReady

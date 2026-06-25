@@ -26,7 +26,7 @@ struct ArrowSceneView: UIViewRepresentable {
   /// First SceneKit frame has been rendered.
   var sceneRenderingReady: Bool
   /// Valid aim direction for the current target (GPS + geometry / ephemeris as required).
-  var arrowDirectionReady: Bool
+
   /// When true, show the flat wait spinner (not the azimuth plate): scene not ready, satellite ephemeris still loading, aim not resolved yet, or target change until the first successful az/el for that selection (`ContentView`).
   var orientationRingShowsWait: Bool
   /// Spinner revolution duration in seconds (1.0 for GPS wait, 2.0 for ephemeris load).
@@ -92,7 +92,7 @@ struct ArrowSceneView: UIViewRepresentable {
       observerEllipsoidHeightMeters: observerEllipsoidHeightMeters,
       overlaySettings: overlaySettings,
       sceneRenderingReady: sceneRenderingReady,
-      arrowDirectionReady: arrowDirectionReady,
+
       orientationRingShowsWait: orientationRingShowsWait,
       spinnerDuration: spinnerDuration
     )
@@ -113,7 +113,7 @@ struct ArrowSceneView: UIViewRepresentable {
       observerEllipsoidHeightMeters: observerEllipsoidHeightMeters,
       overlaySettings: overlaySettings,
       sceneRenderingReady: sceneRenderingReady,
-      arrowDirectionReady: arrowDirectionReady,
+
       orientationRingShowsWait: orientationRingShowsWait,
       spinnerDuration: spinnerDuration
     )
@@ -144,22 +144,10 @@ struct ArrowSceneView: UIViewRepresentable {
     var readyBinding: Binding<Bool>?
     private var postedFirstFrame = false
     private var motionStarted = false
-    /// Cached aim direction from the last successful computation. Used as fallback
-    /// during transient GPS gaps so the arrow never flickers back to the wait spinner.
-    /// Cleared only when the user picks a different target.
-    var lastResolvedAimENU: simd_float3?
+    private var hasReceivedAttitude = false
     private var lastPickableId: String?
-    /// SLERP state: the direction currently displayed (interpolating toward targetENU).
-    private var currentDisplayENU: simd_float3?
-    /// SLERP state: the most recent computed aim direction we're interpolating toward.
-    private var targetENU: simd_float3?
-    private var lastRenderTime: TimeInterval = 0
+    private var lastSpinnerDuration: Double = 1.0
 
-    // Spinner→bezel transition state
-    private enum TransitionPhase { case spinning, windDown, fadeIn, resolved, none }
-    private var transitionPhase: TransitionPhase = .none
-    private var transitionStart: TimeInterval = 0
-    private var wasShowingWait = true
     func renderer(_ renderer: SCNSceneRenderer, didRenderScene scene: SCNScene, atTime time: TimeInterval) {
       guard !postedFirstFrame else { return }
       postedFirstFrame = true
@@ -168,91 +156,9 @@ struct ArrowSceneView: UIViewRepresentable {
       }
     }
 
-    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-      // Drive spinner→bezel transition
-      if transitionPhase == .windDown {
-        let elapsed = CACurrentMediaTime() - transitionStart
-        let windDownDuration: Double = 0.95
-        if elapsed >= windDownDuration {
-          // Stop spinner, start bezel fade-in
-          if let diskNode = flatDiskSpinnerRoot?.childNode(withName: "flatSpinnerDisc", recursively: true) {
-            diskNode.removeAllActions()
-          }
-          flatDiskSpinnerRoot?.isHidden = true
-          transitionPhase = .fadeIn
-          transitionStart = CACurrentMediaTime()
-        } else {
-          // Ease spinner speed: decelerate to zero
-          let progress = Float(elapsed / windDownDuration)
-          let eased = 1.0 - progress * progress
-          if let diskNode = flatDiskSpinnerRoot?.childNode(withName: "flatSpinnerDisc", recursively: true) {
-            diskNode.removeAllActions()
-            if eased > 0.01 {
-              let duration = max(0.1, lastSpinnerDuration / Double(eased))
-              let spin = SCNAction.repeatForever(
-                SCNAction.rotateBy(x: 0, y: 0, z: CGFloat.pi * 2, duration: duration)
-              )
-              diskNode.runAction(spin)
-            }
-          }
-        }
-      } else if transitionPhase == .fadeIn {
-        let elapsed = CACurrentMediaTime() - transitionStart
-        let fadeInDuration: Double = 0.5
-        if elapsed >= fadeInDuration {
-          horizonDiskRoot?.isHidden = false
-          arrowNode?.isHidden = false
-          arrowNode?.opacity = 1.0
-          horizonDiskRoot?.opacity = 1.0
-          transitionPhase = .resolved
-        } else {
-          let progress = CGFloat(elapsed / fadeInDuration)
-          horizonDiskRoot?.isHidden = false
-          horizonDiskRoot?.opacity = progress
-          arrowNode?.isHidden = false
-          arrowNode?.opacity = progress
-        }
-      }
-
-      guard let current = currentDisplayENU, let target = targetENU else { return }
-
-      let dt = lastRenderTime > 0 ? Float(time - lastRenderTime) : 0
-      lastRenderTime = time
-
-      guard dt > 0, dt < 0.5 else { return }
-
-      let a = simd_normalize(current)
-      let b = simd_normalize(target)
-
-      let speed: Float = 10.0
-      let t = min(1.0, speed * dt)
-      let dot = simd_dot(a, b)
-
-      let interpolated: simd_float3
-      if dot > 0.9999 {
-        interpolated = b
-      } else {
-        let angle = acos(max(-1, min(1, dot)))
-        let sinAngle = sin(angle)
-        let ta = sin((1 - t) * angle) / sinAngle
-        let tb = sin(t * angle) / sinAngle
-        interpolated = simd_normalize(a * ta + b * tb)
-      }
-
-      currentDisplayENU = interpolated
-
-      let twist = Self.quaternionAligning(
-        from: simd_normalize(simd_float3(0, 1, 0)),
-        to: interpolated
-      )
-      arrowNode?.simdOrientation = twist
-    }
-
     deinit {
       motionManager.stopUpdates()
     }
-
-    private var lastSpinnerDuration: Double = 1.0
 
     func sync(
       aimMode: AimSession.AimMode,
@@ -263,7 +169,7 @@ struct ArrowSceneView: UIViewRepresentable {
       observerEllipsoidHeightMeters: Double,
       overlaySettings: PointerDisplaySettings,
       sceneRenderingReady: Bool,
-      arrowDirectionReady: Bool,
+
       orientationRingShowsWait: Bool,
       spinnerDuration: Double
     ) {
@@ -271,14 +177,9 @@ struct ArrowSceneView: UIViewRepresentable {
 
       if pickableId != lastPickableId {
         lastPickableId = pickableId
-        lastResolvedAimENU = nil
-        currentDisplayENU = nil
-        targetENU = nil
-        transitionPhase = .none
-        wasShowingWait = false
       }
 
-      let (_, _, rawENU) = Self.twistFrameAndAimENU(
+      let rawENU = Self.aimDirectionENU(
         aimMode: aimMode,
         userCoordinate: userCoordinate,
         aimInstant: aimInstant,
@@ -287,72 +188,22 @@ struct ArrowSceneView: UIViewRepresentable {
       )
       // Core Motion .xTrueNorthZVertical: +X north, +Y west, +Z up.
       // Our ENU vectors use +Y east, so negate Y for the rendering frame.
-      let aimENU = simd_float3(rawENU.x, -rawENU.y, rawENU.z)
+      let aimENU = rawENU.map { simd_float3($0.x, -$0.y, $0.z) }
 
-      let hasValidAim = arrowDirectionReady
-      if hasValidAim {
-        lastResolvedAimENU = aimENU
+      let ready = aimENU != nil && hasReceivedAttitude && sceneRenderingReady
+      let showWait = orientationRingShowsWait && !ready && hasReceivedAttitude
+
+      if let dir = aimENU, ready {
+        arrow.simdOrientation = Self.quaternionAligning(
+          from: simd_normalize(simd_float3(0, 1, 0)),
+          to: simd_normalize(dir)
+        )
       }
 
-      let effectiveAimAvailable = hasValidAim || lastResolvedAimENU != nil
-      let newTarget = hasValidAim ? aimENU : (lastResolvedAimENU ?? aimENU)
-      targetENU = newTarget
+      arrow.isHidden = !ready || !overlaySettings.showArrow
+      flatDiskSpinnerRoot?.isHidden = !showWait
 
-      if currentDisplayENU == nil {
-        currentDisplayENU = newTarget
-      }
-
-      let displayDir = currentDisplayENU ?? newTarget
-      let effectiveTwist = Self.quaternionAligning(
-        from: simd_normalize(simd_float3(0, 1, 0)),
-        to: simd_normalize(displayDir)
-      )
-
-      arrow.simdOrientation = effectiveTwist
-
-      let overlayHorizon = overlaySettings.showAzimuthDisk
-      let effectiveShowWait = orientationRingShowsWait && !effectiveAimAvailable
-
-      // Detect wait→resolved edge and kick off transition
-      if wasShowingWait && !effectiveShowWait && effectiveAimAvailable {
-        if transitionPhase == .none || transitionPhase == .spinning {
-          transitionPhase = .windDown
-          transitionStart = CACurrentMediaTime()
-        }
-      }
-      if effectiveShowWait {
-        transitionPhase = transitionPhase == .windDown || transitionPhase == .fadeIn ? .spinning : .spinning
-        transitionStart = 0
-      }
-      wasShowingWait = effectiveShowWait
-
-      var inTransition = transitionPhase == .windDown || transitionPhase == .fadeIn
-      if inTransition && transitionStart > 0 && (CACurrentMediaTime() - transitionStart) > 3.0 {
-        transitionPhase = .resolved
-        inTransition = false
-      }
-      let showArrow: Bool
-      let showSpinner: Bool
-      let showBezel: Bool
-
-      if inTransition {
-        showArrow = false
-        showSpinner = transitionPhase == .windDown
-        showBezel = transitionPhase == .fadeIn
-      } else if effectiveShowWait {
-        showArrow = false
-        showSpinner = overlayHorizon
-        showBezel = false
-      } else {
-        showArrow = overlaySettings.showArrow && sceneRenderingReady && effectiveAimAvailable
-        showSpinner = false
-        showBezel = overlayHorizon && effectiveAimAvailable && sceneRenderingReady
-      }
-
-      arrow.isHidden = !showArrow
-      flatDiskSpinnerRoot?.isHidden = !showSpinner
-
-      if showSpinner && spinnerDuration != lastSpinnerDuration {
+      if showWait && spinnerDuration != lastSpinnerDuration {
         lastSpinnerDuration = spinnerDuration
         if let diskNode = flatDiskSpinnerRoot?.childNode(withName: "flatSpinnerDisc", recursively: true) {
           diskNode.removeAllActions()
@@ -363,18 +214,18 @@ struct ArrowSceneView: UIViewRepresentable {
         }
       }
 
-      let effectiveAimENU = hasValidAim ? aimENU : (lastResolvedAimENU ?? aimENU)
+      let showBezel = ready && overlaySettings.showAzimuthDisk
       Self.updateHorizonDisk(
         root: horizonDiskRoot,
         targetAzimuthPivot: targetAzimuthPivot,
-        frame: .xTrueNorthZVertical,
-        aimENU: effectiveAimENU,
+        aimENU: aimENU ?? simd_float3(1, 0, 0),
         showAzimuthPlate: showBezel
       )
 
       if !motionStarted {
         motionStarted = true
-        motionManager.restart(referenceFrame: .xTrueNorthZVertical) { attitude in
+        motionManager.restart(referenceFrame: .xTrueNorthZVertical) { [weak self] attitude in
+          self?.hasReceivedAttitude = true
           Self.applyDeviceStabilization(stabilized: stabilized, attitude: attitude)
         }
       }
@@ -407,73 +258,45 @@ struct ArrowSceneView: UIViewRepresentable {
       return simd_quaternion(angle, axis)
     }
 
-    /// True-north ENU: **+X north**, **+Y east**, **+Z up** (same basis as aim unit vectors from `Geodesy` / `TopocentricAstronomy`).
-    private static func twistFrameAndAimENU(
+    /// ENU direction toward the target in true-north coordinates: +X north, +Y east, +Z up.
+    /// Returns nil when the direction can't be computed (no GPS, degenerate, etc.).
+    private static func aimDirectionENU(
       aimMode: AimSession.AimMode,
       userCoordinate: CLLocationCoordinate2D?,
       aimInstant: Date,
       satelliteENU: simd_float3?,
       observerEllipsoidHeightMeters: Double
-    ) -> (simd_quatf, CMAttitudeReferenceFrame, simd_float3) {
+    ) -> simd_float3? {
+      guard let userCoordinate else { return nil }
       switch aimMode {
       case .ground(let target):
-        guard let userCoordinate else {
-          return fallbackArbitraryHorizontalAim()
-        }
         let destCoord = CLLocationCoordinate2D(latitude: target.latitude, longitude: target.longitude)
         let origin = CLLocation(latitude: userCoordinate.latitude, longitude: userCoordinate.longitude)
         let dest = CLLocation(latitude: destCoord.latitude, longitude: destCoord.longitude)
-        if origin.distance(from: dest) < 3 {
-          return fallbackArbitraryHorizontalAim()
-        }
-        guard let dir = Geodesy.trueNorthENUChordUnit(from: userCoordinate, to: destCoord) else {
-          return fallbackArbitraryHorizontalAim()
-        }
-        let twist = quaternionAligning(from: simd_normalize(simd_float3(0, 1, 0)), to: dir)
-        return (twist, .xTrueNorthZVertical, dir)
+        guard origin.distance(from: dest) >= 3 else { return nil }
+        return Geodesy.trueNorthENUChordUnit(from: userCoordinate, to: destCoord)
       case .celestial(let target):
-        guard let userCoordinate else {
-          return fallbackArbitraryHorizontalAim()
-        }
         if target.kind == .satellite {
-          if let dir = satelliteENU {
-            let twist = quaternionAligning(from: simd_normalize(simd_float3(0, 1, 0)), to: dir)
-            return (twist, .xTrueNorthZVertical, dir)
-          }
-          let shaft = simd_normalize(simd_float3(0, 1, 0))
-          return (quaternionAligning(from: shaft, to: shaft), .xTrueNorthZVertical, shaft)
+          return satelliteENU
         }
-        guard let dir = TopocentricAstronomy.enuForCelestialCatalog(
+        return TopocentricAstronomy.enuForCelestialCatalog(
           target,
           observer: userCoordinate,
           at: aimInstant,
           ellipsoidHeightMeters: observerEllipsoidHeightMeters
-        ) else {
-          return fallbackArbitraryHorizontalAim()
-        }
-        let twist = quaternionAligning(from: simd_normalize(simd_float3(0, 1, 0)), to: dir)
-        return (twist, .xTrueNorthZVertical, dir)
+        )
       }
-    }
-
-    /// +X in `.xArbitraryZVertical` — used only when there is no valid user→target chord (no fix, coincident, degenerate).
-    private static func fallbackArbitraryHorizontalAim() -> (simd_quatf, CMAttitudeReferenceFrame, simd_float3) {
-      let ref = simd_normalize(simd_float3(1, 0, 0))
-      let twist = quaternionAligning(from: simd_normalize(simd_float3(0, 1, 0)), to: ref)
-      return (twist, .xArbitraryZVertical, ref)
     }
 
     private static func updateHorizonDisk(
       root: SCNNode?,
       targetAzimuthPivot: SCNNode?,
-      frame: CMAttitudeReferenceFrame,
       aimENU: simd_float3,
       showAzimuthPlate: Bool
     ) {
       guard let root, let pivot = targetAzimuthPivot else { return }
-      let showTerrestrial = (frame == .xTrueNorthZVertical) && showAzimuthPlate
-      root.isHidden = !showTerrestrial
-      guard showTerrestrial else { return }
+      root.isHidden = !showAzimuthPlate
+      guard showAzimuthPlate else { return }
 
       let d = simd_normalize(aimENU)
       let hz = hypot(Double(d.x), Double(d.y))
