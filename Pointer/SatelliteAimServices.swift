@@ -57,6 +57,18 @@ final class SatelliteAimStore: ObservableObject {
     heightAboveEllipsoidMeters: Double,
     at date: Date
   ) async -> simd_float3? {
+    let maxAge: TimeInterval
+    let lastFetch: Date?
+    switch route {
+    case .iss:   maxAge = 1800; lastFetch = lastISSFetch
+    case .hubble: maxAge = 1800; lastFetch = lastHubbleFetch
+    case .jwst:  maxAge = 3600; lastFetch = lastJwstFetch
+    }
+
+    if let last = lastFetch, date.timeIntervalSince(last) < maxAge {
+      return staleENU(route: route, observer: observer, heightAboveEllipsoidMeters: heightAboveEllipsoidMeters, at: date)
+    }
+
     switch route {
     case .iss:
       await refreshISS(observer: observer, heightMeters: heightAboveEllipsoidMeters, at: date)
