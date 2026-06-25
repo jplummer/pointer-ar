@@ -13,13 +13,6 @@ final class AimSession: ObservableObject {
       }
     }
 
-    var caption: String? {
-      switch self {
-      case .ground(let t): return t.notes
-      case .celestial(let t): return t.notes
-      }
-    }
-
     /// Stable id for `ScrollViewReader.scrollTo`.
     var pickableId: String {
       switch self {
@@ -156,13 +149,8 @@ struct TargetPickerExpando: View {
               .foregroundStyle(Color.white)
               .multilineTextAlignment(.leading)
               .shadow(color: .black.opacity(0.45), radius: 3, x: 0, y: 1)
-            if !session.pickerExpanded, let caption = session.aimMode.caption {
-              Text(caption)
-                .font(.subheadline.weight(.medium))
-                .foregroundStyle(Color.white.opacity(0.92))
-                .fixedSize(horizontal: false, vertical: true)
-                .lineLimit(4)
-            }
+
+
           }
           Spacer(minLength: 8)
           Image(systemName: session.pickerExpanded ? "chevron.up.circle.fill" : "chevron.down.circle.fill")

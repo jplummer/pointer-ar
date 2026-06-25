@@ -7,6 +7,17 @@ import simd
 /// **JPL Horizons:** Prefer NASA/JPL Horizons observer-centered ephemerides when a body needs high-quality topocentric az/el (or non‑Kepler motion) and local analytic/TLE propagation is insufficient — JWST already uses `ssd.jpl.nasa.gov/api/horizons.api`; extend that pattern for similar targets instead of inventing bespoke orbit integrators here.
 @MainActor
 final class SatelliteAimStore: ObservableObject {
+  /// Fallback GP elements for ISS (NORAD 25544) so aiming can still resolve if network ephemeris fetches fail.
+  private static let fallbackISSGP = TLEKeplerPropagator.GPRecord(
+    epoch: Date(timeIntervalSince1970: 1_750_800_000),
+    meanMotionRevPerDay: 15.49560348,
+    eccentricity: 0.0006740,
+    inclinationDeg: 51.6392,
+    raOfAscNodeDeg: 142.6226,
+    argOfPericenterDeg: 30.7654,
+    meanAnomalyDeg: 329.3748
+  )
+
   /// Fallback GP elements for HST (NORAD 20580) so aiming can still resolve if network ephemeris fetches fail.
   private static let fallbackHubbleGP = TLEKeplerPropagator.GPRecord(
     epoch: Date(timeIntervalSince1970: 1_745_528_245.771456),
@@ -32,6 +43,7 @@ final class SatelliteAimStore: ObservableObject {
   @Published private(set) var lastISSFetch: Date?
   @Published private(set) var lastHubbleFetch: Date?
   @Published private(set) var lastJwstFetch: Date?
+  @Published private(set) var lastISSGP: TLEKeplerPropagator.GPRecord?
   @Published private(set) var lastHubbleGP: TLEKeplerPropagator.GPRecord?
 
   /// Published so selecting a satellite triggers a redraw when async fetch fills the cache (private caches did not notify `ObservableObject`).
@@ -47,7 +59,7 @@ final class SatelliteAimStore: ObservableObject {
   ) async -> simd_float3? {
     switch route {
     case .iss:
-      await refreshISS(observer: observer, heightMeters: heightAboveEllipsoidMeters)
+      await refreshISS(observer: observer, heightMeters: heightAboveEllipsoidMeters, at: date)
       return issENU
     case .hubble:
       await refreshHubble(observer: observer, heightMeters: heightAboveEllipsoidMeters, at: date)
@@ -86,6 +98,15 @@ final class SatelliteAimStore: ObservableObject {
   ) -> simd_float3? {
     switch route {
     case .iss:
+      if let gp = lastISSGP,
+         let satKm = TLEKeplerPropagator.ecefKilometers(gp: gp, time: date),
+         let v = Self.enuFromEcefKm(observer: observer, heightMeters: heightAboveEllipsoidMeters, satelliteEcefKm: satKm) {
+        return v
+      }
+      if let satKm = TLEKeplerPropagator.ecefKilometers(gp: Self.fallbackISSGP, time: date),
+         let v = Self.enuFromEcefKm(observer: observer, heightMeters: heightAboveEllipsoidMeters, satelliteEcefKm: satKm) {
+        return v
+      }
       return issENU
     case .hubble:
       if let gp = lastHubbleGP,
@@ -103,18 +124,59 @@ final class SatelliteAimStore: ObservableObject {
     }
   }
 
-  private func refreshISS(observer: CLLocationCoordinate2D, heightMeters: Double) async {
-    guard let url = URL(string: "https://api.wheretheiss.at/v1/satellites/25544") else { return }
+  private func refreshISS(observer: CLLocationCoordinate2D, heightMeters: Double, at date: Date) async {
+    let urls = [
+      URL(string: "https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=json"),
+      URL(string: "https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=json"),
+    ].compactMap { $0 }
+
+    for url in urls {
+      do {
+        let (data, _) = try await Self.satelliteSession.data(from: url)
+        guard !data.isEmpty, data.first != UInt8(ascii: "<") else { continue }
+        let rows = try Self.decodeGpRows(from: data)
+        let row: GpRow?
+        if url.absoluteString.contains("GROUP=stations") {
+          row = rows.first { $0.noradCatId == 25544 }
+        } else {
+          row = rows.first
+        }
+        guard let row,
+              let iso = GpEpochParser.parseUtc(row.epoch),
+              let gp = gpRecord(from: row, epoch: iso),
+              let satKm = TLEKeplerPropagator.ecefKilometers(gp: gp, time: date),
+              let enu = Self.enuFromEcefKm(observer: observer, heightMeters: heightMeters, satelliteEcefKm: satKm)
+        else { continue }
+        lastISSGP = gp
+        issENU = enu
+        lastISSFetch = Date()
+        return
+      } catch {
+        continue
+      }
+    }
+
+    await refreshISSFromPublicTleApi(observer: observer, heightMeters: heightMeters, at: date)
+    guard lastISSGP == nil,
+          let satKm = TLEKeplerPropagator.ecefKilometers(gp: Self.fallbackISSGP, time: date),
+          let enu = Self.enuFromEcefKm(observer: observer, heightMeters: heightMeters, satelliteEcefKm: satKm)
+    else { return }
+    lastISSGP = Self.fallbackISSGP
+    issENU = enu
+    lastISSFetch = Date()
+  }
+
+  private func refreshISSFromPublicTleApi(observer: CLLocationCoordinate2D, heightMeters: Double, at date: Date) async {
+    guard let url = URL(string: "https://tle.ivanstanojevic.me/api/tle/25544") else { return }
     do {
       let (data, _) = try await Self.satelliteSession.data(from: url)
-      let decoded = try JSONDecoder().decode(WhereIssPayload.self, from: data)
-      guard let lat = decoded.latitude,
-            let lon = decoded.longitude,
-            let altKm = decoded.altitude
+      guard !data.isEmpty, data.first != UInt8(ascii: "<") else { return }
+      let payload = try JSONDecoder().decode(PublicTleApiPayload.self, from: data)
+      guard let gp = NoradTwoLineElements.gpRecord(line1: payload.line1, line2: payload.line2),
+            let satKm = TLEKeplerPropagator.ecefKilometers(gp: gp, time: date),
+            let enu = Self.enuFromEcefKm(observer: observer, heightMeters: heightMeters, satelliteEcefKm: satKm)
       else { return }
-      let satMeters = Geodesy.ecefMeters(latitude: lat, longitude: lon, heightAboveEllipsoid: altKm * 1000)
-      guard let enu = Self.enuFromEcefMeters(observer: observer, heightMeters: heightMeters, satelliteEcefMeters: satMeters)
-      else { return }
+      lastISSGP = gp
       issENU = enu
       lastISSFetch = Date()
     } catch {
@@ -315,29 +377,6 @@ final class SatelliteAimStore: ObservableObject {
     f.timeZone = TimeZone(secondsFromGMT: 0)
     f.dateFormat = "yyyy-MMM-dd HH:mm:ss"
     return "'" + f.string(from: date) + "'"
-  }
-
-  private struct WhereIssPayload: Decodable {
-    let latitude: Double?
-    let longitude: Double?
-    let altitude: Double?
-
-    enum CodingKeys: String, CodingKey {
-      case latitude, longitude, altitude
-    }
-
-    init(from decoder: Decoder) throws {
-      let c = try decoder.container(keyedBy: CodingKeys.self)
-      latitude = Self.decodeOptionalDouble(c, key: .latitude)
-      longitude = Self.decodeOptionalDouble(c, key: .longitude)
-      altitude = Self.decodeOptionalDouble(c, key: .altitude)
-    }
-
-    private static func decodeOptionalDouble(_ c: KeyedDecodingContainer<CodingKeys>, key: CodingKeys) -> Double? {
-      if let v = try? c.decode(Double.self, forKey: key) { return v }
-      if let s = try? c.decode(String.self, forKey: key) { return Double(s) }
-      return nil
-    }
   }
 
   private static func decodeGpRows(from data: Data) throws -> [GpRow] {

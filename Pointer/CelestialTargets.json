@@ -81,23 +81,13 @@
       "sources": ["https://simbad.u-strasbg.fr/simbad/sim-id?Ident=Polaris"]
     },
     {
-      "id": "sky.sirius",
-      "displayName": "Sirius",
-      "group": "celestial_sky",
-      "kind": "fixed_star",
-      "raHours": 6.752481,
-      "decDegrees": -16.716116,
-      "notes": "Bright star anchor; coordinates rounded from catalog.",
-      "sources": ["https://simbad.u-strasbg.fr/simbad/sim-id?Ident=*%20alp%20CMa"]
-    },
-    {
       "id": "orbit.iss",
       "displayName": "International Space Station",
       "group": "celestial_orbit",
       "kind": "satellite",
       "satelliteRoute": "iss",
-      "notes": "Live latitude/longitude/altitude from api.wheretheiss.at",
-      "sources": ["https://wheretheiss.at/w/developer"]
+      "notes": "CelesTrak GP elements + simplified Kepler propagation (~km-class vs SGP4)",
+      "sources": ["https://celestrak.org"]
     },
     {
       "id": "orbit.hubble",

@@ -67,6 +67,7 @@ struct ContentView: View {
         satelliteStore.issENU,
         satelliteStore.hubbleENU,
         satelliteStore.jwstENU,
+        satelliteStore.lastISSGP,
         satelliteStore.lastHubbleGP
       )
       let _ = (
