@@ -449,17 +449,37 @@ struct ArrowSceneView: UIViewRepresentable {
         UIColor.white.withAlphaComponent(0.35).setFill()
         UIBezierPath(arcCenter: center, radius: outerR, startAngle: 0, endAngle: .pi * 2, clockwise: true).fill()
 
-        // Tick marks: 72 positions (every 5°), major every 45°, medium every 15°
         let tickDark = UIColor(red: 0.078, green: 0.102, blue: 0.114, alpha: 1)
+
+        // Cardinal crosshair lines (0°, 90°, 180°, 270°) from center to rim
+        let crosshairWidth: CGFloat = 1.4
+        let zeroTickInner = outerR - 0.30 * outerR / CGFloat(bezelRadius)
+        for qi in 0 ..< 4 {
+          let angle = CGFloat(qi) * .pi / 2 - .pi / 2
+          let isZero = (qi == 0)
+          let outer: CGFloat = isZero ? zeroTickInner - 4.0 : outerR
+          let p1 = CGPoint(x: center.x, y: center.y)
+          let p2 = CGPoint(x: center.x + outer * cos(angle), y: center.y + outer * sin(angle))
+          let line = UIBezierPath()
+          line.move(to: p1)
+          line.addLine(to: p2)
+          line.lineWidth = crosshairWidth
+          line.lineCapStyle = .butt
+          tickDark.withAlphaComponent(0.28).setStroke()
+          line.stroke()
+        }
+
+        // Tick marks: 72 positions (every 5°), major every 45°, medium every 15°
         for i in 0 ..< N {
           let deg = CGFloat(i) * 5
           let angle = deg * .pi / 180 - .pi / 2
-          let major = (i % 9 == 0) // every 45°
-          let med = (i % 3 == 0) // every 15°
+          let cardinal = (i % 18 == 0)
+          let major = (i % 9 == 0)
+          let med = (i % 3 == 0)
 
-          let depth: CGFloat = major ? 0.20 : med ? 0.11 : 0.06
-          let width: CGFloat = major ? 2.5 : med ? 1.8 : 1.2
-          let alpha: CGFloat = major ? 0.92 : med ? 0.72 : 0.48
+          let depth: CGFloat = cardinal ? 0.28 : major ? 0.20 : med ? 0.11 : 0.06
+          let width: CGFloat = cardinal ? 2.8 : major ? 2.5 : med ? 1.8 : 1.2
+          let alpha: CGFloat = cardinal ? 0.95 : major ? 0.92 : med ? 0.72 : 0.48
 
           let scale = outerR / CGFloat(bezelRadius)
           let tickOuter = outerR
@@ -477,18 +497,16 @@ struct ArrowSceneView: UIViewRepresentable {
           tick.stroke()
         }
 
-        // Scale zero: double tick at 0° (two ticks offset ±0.02 rad)
+        // Double tick at 0° — tighter gap, interrupts the N-S crosshair
         let zeroDepth: CGFloat = 0.30
         let scale = outerR / CGFloat(bezelRadius)
-        for offset: CGFloat in [-0.02, 0.02] {
+        for offset: CGFloat in [-0.012, 0.012] {
           let angle = offset - .pi / 2
           let outer = outerR
           let inner = outer - zeroDepth * scale
-          let p1 = CGPoint(x: center.x + inner * cos(angle), y: center.y + inner * sin(angle))
-          let p2 = CGPoint(x: center.x + outer * cos(angle), y: center.y + outer * sin(angle))
           let tick = UIBezierPath()
-          tick.move(to: p1)
-          tick.addLine(to: p2)
+          tick.move(to: CGPoint(x: center.x + inner * cos(angle), y: center.y + inner * sin(angle)))
+          tick.addLine(to: CGPoint(x: center.x + outer * cos(angle), y: center.y + outer * sin(angle)))
           tick.lineWidth = 2.2
           tick.lineCapStyle = .butt
           tickDark.withAlphaComponent(0.97).setStroke()
