@@ -78,7 +78,7 @@ enum AimHorizonAngles {
         ) else { return nil }
         return azEl(fromENU: d)
 
-      case .sun, .moon, .fixed_star:
+      case .sun, .moon, .planet, .fixed_star:
         if let h = TopocentricAstronomy.apparentHorizontalDegrees(
           target: target,
           observer: obs,

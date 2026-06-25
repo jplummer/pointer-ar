@@ -7,310 +7,91 @@
   },
   "targets": [
     {
-      "id": "ancient.great_pyramid_giza",
-      "displayName": "Great Pyramids of Giza",
-      "group": "seven_ancient_wonders",
+      "id": "place.kaaba",
+      "displayName": "Kaaba",
+      "group": "places",
+      "latitude": 21.422477,
+      "longitude": 39.826158,
+      "notes": "Masjid al-Haram, Mecca",
+      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Kaaba"]
+    },
+    {
+      "id": "place.great_pyramid",
+      "displayName": "Great Pyramid of Giza",
+      "group": "places",
       "latitude": 29.979167,
       "longitude": 31.134167,
       "notes": "Pyramid of Khufu",
       "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Great_Pyramid_of_Giza"]
     },
     {
-      "id": "ancient.hanging_gardens_babylon",
-      "displayName": "Hanging Gardens of Babylon",
-      "group": "seven_ancient_wonders",
-      "latitude": 32.536389,
-      "longitude": 44.420833,
-      "notes": "Location in dispute; Hillah/Babylon area",
-      "sources": ["https://en.wikipedia.org/wiki/Hanging_Gardens_of_Babylon"]
-    },
-    {
-      "id": "ancient.temple_of_artemis_ephesus",
-      "displayName": "Temple of Artemis at Ephesus",
-      "group": "seven_ancient_wonders",
-      "latitude": 37.949722,
-      "longitude": 27.363889,
-      "notes": "Ruins near Selçuk",
-      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Temple_of_Artemis"]
-    },
-    {
-      "id": "ancient.statue_of_zeus_olympia",
-      "displayName": "Statue of Zeus at Olympia",
-      "group": "seven_ancient_wonders",
-      "latitude": 37.637944,
-      "longitude": 21.629889,
-      "notes": "Sanctuary of Olympia; statue no longer present",
-      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Statue_of_Zeus_at_Olympia"]
-    },
-    {
-      "id": "ancient.mausoleum_halicarnassus",
-      "displayName": "Mausoleum at Halicarnassus",
-      "group": "seven_ancient_wonders",
-      "latitude": 37.038056,
-      "longitude": 27.424167,
-      "notes": "Bodrum (ancient Halicarnassus)",
-      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Mausoleum_at_Halicarnassus"]
-    },
-    {
-      "id": "ancient.colossus_of_rhodes",
-      "displayName": "Colossus of Rhodes",
-      "group": "seven_ancient_wonders",
-      "latitude": 36.451389,
-      "longitude": 28.227778,
-      "notes": "Statue destroyed; Rhodes Mandraki harbor area",
-      "sources": ["https://en.wikipedia.org/wiki/Colossus_of_Rhodes"]
-    },
-    {
-      "id": "ancient.lighthouse_alexandria",
-      "displayName": "Lighthouse of Alexandria",
-      "group": "seven_ancient_wonders",
-      "latitude": 31.214167,
-      "longitude": 29.885556,
-      "notes": "Fort Qaitbay vicinity on Pharos Island; lighthouse destroyed",
-      "sources": ["https://en.wikipedia.org/wiki/Lighthouse_of_Alexandria"]
-    },
-    {
-      "id": "new7.great_wall_china",
-      "displayName": "Great Wall of China",
-      "group": "new7_wonders_winner",
-      "latitude": 40.359722,
-      "longitude": 116.020278,
-      "notes": "Representative publicly accessible segment at Badaling; the wall is long",
-      "sources": ["https://en.wikipedia.org/wiki/Badaling"]
-    },
-    {
-      "id": "new7.petra",
-      "displayName": "Petra",
-      "group": "new7_wonders_winner",
-      "latitude": 30.322472,
-      "longitude": 35.451617,
-      "notes": "Al-Khazneh treasury façade",
-      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Petra"]
-    },
-    {
-      "id": "new7.christ_the_redeemer",
-      "displayName": "Christ the Redeemer",
-      "group": "new7_wonders_winner",
-      "latitude": -22.951917,
-      "longitude": -43.210556,
-      "notes": "Corcovado",
-      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Christ_the_Redeemer_(statue)"]
-    },
-    {
-      "id": "new7.machu_picchu",
+      "id": "place.machu_picchu",
       "displayName": "Machu Picchu",
-      "group": "new7_wonders_winner",
+      "group": "places",
       "latitude": -13.163056,
       "longitude": -72.545556,
       "notes": "Citadel",
       "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Machu_Picchu"]
     },
     {
-      "id": "new7.chichen_itza",
-      "displayName": "Chichen Itza (El Castillo)",
-      "group": "new7_wonders_winner",
-      "latitude": 20.682778,
-      "longitude": -88.568056,
-      "notes": "Kukulcán pyramid as anchor.",
-      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Chichen_Itza"]
+      "id": "place.great_wall",
+      "displayName": "Great Wall of China",
+      "group": "places",
+      "latitude": 40.359722,
+      "longitude": 116.020278,
+      "notes": "Badaling segment",
+      "sources": ["https://en.wikipedia.org/wiki/Badaling"]
     },
     {
-      "id": "new7.colosseum",
-      "displayName": "Colosseum",
-      "group": "new7_wonders_winner",
-      "latitude": 41.890278,
-      "longitude": 12.492222,
-      "notes": "Center of the amphitheatre",
-      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Colosseum"]
-    },
-    {
-      "id": "new7.taj_mahal",
-      "displayName": "Taj Mahal",
-      "group": "new7_wonders_winner",
-      "latitude": 27.175017,
-      "longitude": 78.042156,
-      "notes": "Mausoleum precinct",
-      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Taj_Mahal"]
-    },
-    {
-      "id": "finalist.acropolis",
-      "displayName": "Acropolis of Athens",
-      "group": "new7_finalist",
-      "latitude": 37.971389,
-      "longitude": 23.726667,
-      "notes": "Parthenon",
-      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Acropolis_of_Athens"]
-    },
-    {
-      "id": "finalist.alhambra",
-      "displayName": "Alhambra",
-      "group": "new7_finalist",
-      "latitude": 37.176077,
-      "longitude": -3.588141,
-      "notes": "Nasrid palaces",
-      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Alhambra"]
-    },
-    {
-      "id": "finalist.angkor_wat",
-      "displayName": "Angkor Wat",
-      "group": "new7_finalist",
-      "latitude": 13.412469,
-      "longitude": 103.866985,
-      "notes": "Main temple complex",
-      "sources": ["https://whc.unesco.org/en/list/668/"]
-    },
-    {
-      "id": "finalist.easter_island",
-      "displayName": "Easter Island",
-      "group": "new7_finalist",
-      "latitude": -27.126667,
-      "longitude": -109.276944,
-      "notes": "Ahu Tongariki Moai platform row",
-      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Ahu_Tongariki"]
-    },
-    {
-      "id": "finalist.eiffel_tower",
+      "id": "place.eiffel_tower",
       "displayName": "Eiffel Tower",
-      "group": "new7_finalist",
+      "group": "places",
       "latitude": 48.858370,
       "longitude": 2.294481,
-      "notes": "South pillar",
+      "notes": "Paris",
       "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Eiffel_Tower"]
     },
     {
-      "id": "finalist.hagia_sophia",
-      "displayName": "Hagia Sophia",
-      "group": "new7_finalist",
-      "latitude": 41.008583,
-      "longitude": 28.979930,
-      "notes": "Historic mosque/museum/church",
-      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Hagia_Sophia"]
-    },
-    {
-      "id": "finalist.kiyomizu_dera",
-      "displayName": "Kiyomizu-dera",
-      "group": "new7_finalist",
-      "latitude": 34.994858,
-      "longitude": 135.785046,
-      "notes": "Main hall terrace",
-      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Kiyomizu-dera"]
-    },
-    {
-      "id": "finalist.kremlin",
-      "displayName": "Moscow Kremlin",
-      "group": "new7_finalist",
-      "latitude": 55.752023,
-      "longitude": 37.617499,
-      "notes": "Alexander garden vicinity",
-      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Moscow_Kremlin"]
-    },
-    {
-      "id": "finalist.neuschwanstein",
-      "displayName": "Neuschwanstein Castle",
-      "group": "new7_finalist",
-      "latitude": 47.557575,
-      "longitude": 10.749800,
-      "notes": "Palace near Füssen",
-      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Neuschwanstein_Castle"]
-    },
-    {
-      "id": "finalist.statue_of_liberty",
-      "displayName": "Statue of Liberty",
-      "group": "new7_finalist",
-      "latitude": 40.689247,
-      "longitude": -74.044502,
-      "notes": "Pedestal/visitor coordinates",
-      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Statue_of_Liberty"]
-    },
-    {
-      "id": "finalist.stonehenge",
-      "displayName": "Stonehenge",
-      "group": "new7_finalist",
-      "latitude": 51.178882,
-      "longitude": -1.826215,
-      "notes": "Inner monument cluster",
-      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Stonehenge"]
-    },
-    {
-      "id": "finalist.sydney_opera_house",
+      "id": "place.sydney_opera_house",
       "displayName": "Sydney Opera House",
-      "group": "new7_finalist",
+      "group": "places",
       "latitude": -33.856784,
       "longitude": 151.215297,
-      "notes": "Sails/podium",
       "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Sydney_Opera_House"]
     },
     {
-      "id": "finalist.timbuktu",
-      "displayName": "Timbuktu",
-      "group": "new7_finalist",
-      "latitude": 16.771944,
-      "longitude": -3.008611,
-      "notes": "Great Mosque of Djingareyber",
-      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Great_Mosque_of_Djingareyber"]
+      "id": "place.statue_of_liberty",
+      "displayName": "Statue of Liberty",
+      "group": "places",
+      "latitude": 40.689247,
+      "longitude": -74.044502,
+      "notes": "New York",
+      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Statue_of_Liberty"]
     },
     {
-      "id": "seed.greenwich_prime_meridian",
-      "displayName": "Greenwich Prime Meridian",
-      "group": "seed_plan",
-      "latitude": 51.476853,
-      "longitude": -0.000504,
-      "notes": "Royal Observatory",
-      "sources": ["https://www.rmg.co.uk/royal-observatory"]
+      "id": "place.easter_island",
+      "displayName": "Easter Island",
+      "group": "places",
+      "latitude": -27.126667,
+      "longitude": -109.276944,
+      "notes": "Ahu Tongariki moai",
+      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Ahu_Tongariki"]
     },
     {
-      "id": "seed.mecca_kaaba",
-      "displayName": "Kaaba",
-      "group": "seed_plan",
-      "latitude": 21.422477,
-      "longitude": 39.826158,
-      "notes": "Masjid al-Haram",
-      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Kaaba"]
-    },
-    {
-      "id": "seed.jerusalem_temple_mount",
-      "displayName": "Jerusalem",
-      "group": "seed_plan",
-      "latitude": 31.778061,
-      "longitude": 35.235253,
-      "notes": "Temple Mount",
-      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Temple_Mount"]
-    },
-    {
-      "id": "seed.geographic_north_pole",
+      "id": "pole.north",
       "displayName": "Geographic North Pole",
-      "group": "seed_plan",
+      "group": "poles",
       "latitude": 90.0,
       "longitude": 0.0,
-      "notes": "Longitude is arbitrary at the pole",
       "sources": ["https://en.wikipedia.org/wiki/North_Pole"]
     },
     {
-      "id": "seed.geographic_south_pole",
+      "id": "pole.south",
       "displayName": "Geographic South Pole",
-      "group": "seed_plan",
+      "group": "poles",
       "latitude": -90.0,
       "longitude": 0.0,
-      "notes": "Amundsen–Scott Station area moves with ice sheet",
       "sources": ["https://en.wikipedia.org/wiki/Amundsen%E2%80%93Scott_South_Pole_Station"]
-    },
-    {
-      "id": "seed.challenger_deep",
-      "displayName": "Challenger Deep",
-      "group": "seed_plan",
-      "latitude": 11.373333,
-      "longitude": 142.215,
-      "sources": ["https://en.wikipedia.org/wiki/Challenger_Deep"],
-      "notes": "Mariana Trench depression"
-    },
-    {
-      "id": "seed.mount_everest_summit",
-      "displayName": "Mount Everest summit",
-      "group": "seed_plan",
-      "latitude": 27.988056,
-      "longitude": 86.925278,
-      "notes": "Nepal/China border region; summit coordinates vary slightly by survey",
-      "sources": ["https://geohack.toolforge.org/geohack.php?pagename=Mount_Everest"]
     }
   ]
 }

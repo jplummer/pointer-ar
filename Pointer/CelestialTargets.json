@@ -18,6 +18,51 @@
       "sources": ["https://github.com/jplummer/pointer"]
     },
     {
+      "id": "sky.mercury",
+      "displayName": "Mercury",
+      "group": "celestial_sky",
+      "kind": "planet",
+      "planetId": "mercury",
+      "notes": "Mean orbital elements (JPL); ~1° accuracy",
+      "sources": ["https://ssd.jpl.nasa.gov/planets/approx_pos.html"]
+    },
+    {
+      "id": "sky.venus",
+      "displayName": "Venus",
+      "group": "celestial_sky",
+      "kind": "planet",
+      "planetId": "venus",
+      "notes": "Mean orbital elements (JPL); ~1° accuracy",
+      "sources": ["https://ssd.jpl.nasa.gov/planets/approx_pos.html"]
+    },
+    {
+      "id": "sky.mars",
+      "displayName": "Mars",
+      "group": "celestial_sky",
+      "kind": "planet",
+      "planetId": "mars",
+      "notes": "Mean orbital elements (JPL); ~1° accuracy",
+      "sources": ["https://ssd.jpl.nasa.gov/planets/approx_pos.html"]
+    },
+    {
+      "id": "sky.jupiter",
+      "displayName": "Jupiter",
+      "group": "celestial_sky",
+      "kind": "planet",
+      "planetId": "jupiter",
+      "notes": "Mean orbital elements (JPL); ~1° accuracy",
+      "sources": ["https://ssd.jpl.nasa.gov/planets/approx_pos.html"]
+    },
+    {
+      "id": "sky.saturn",
+      "displayName": "Saturn",
+      "group": "celestial_sky",
+      "kind": "planet",
+      "planetId": "saturn",
+      "notes": "Mean orbital elements (JPL); ~1° accuracy",
+      "sources": ["https://ssd.jpl.nasa.gov/planets/approx_pos.html"]
+    },
+    {
       "id": "bear.magnetic_north",
       "displayName": "Magnetic north",
       "group": "seed_plan",

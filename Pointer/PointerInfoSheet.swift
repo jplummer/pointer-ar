@@ -78,9 +78,9 @@ struct PointerInfoSheet: View {
         return Text(
           "Magnetic north uses WMM-2025 declination, inclination (dip), and the full field direction at your latitude, longitude, and ellipsoid height. The arrow is drawn in a true-north Core Motion frame; compare to a calibrated magnetometer separately."
         )
-      case .sun, .moon, .fixed_star:
+      case .sun, .moon, .planet, .fixed_star:
         return Text(
-          "Altitude and azimuth use your GPS position and current UTC with a simplified ephemeris (Sun/Moon) or catalog RA/Dec (stars). Refraction and high-precision reductions are omitted."
+          "Altitude and azimuth use your GPS position and current UTC with a simplified ephemeris (Sun/Moon/planets) or catalog RA/Dec (stars). Refraction and high-precision reductions are omitted."
         )
       }
     }
@@ -134,9 +134,11 @@ struct PointerInfoSheet: View {
           .font(.headline)
         Text(formatLatLon(latitude: t.latitude, longitude: t.longitude))
           .font(.body.monospacedDigit())
-        Text(t.notes)
-          .font(.caption)
-          .foregroundStyle(.secondary)
+        if let notes = t.notes {
+          Text(notes)
+            .font(.caption)
+            .foregroundStyle(.secondary)
+        }
       }
     case .celestial(let t):
       VStack(alignment: .leading, spacing: 8) {

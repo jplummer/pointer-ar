@@ -21,10 +21,17 @@ struct CelestialTarget: Codable, Identifiable, Hashable {
   enum Kind: String, Codable {
     case sun
     case moon
+    case planet
     case fixed_star
     case magnetic_north
     case satellite
   }
+
+  enum PlanetId: String, Codable {
+    case mercury, venus, mars, jupiter, saturn
+  }
+
+  let planetId: PlanetId?
 
   enum SatelliteRoute: String, Codable, CaseIterable {
     case iss

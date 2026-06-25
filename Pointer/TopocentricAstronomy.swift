@@ -55,6 +55,11 @@ enum TopocentricAstronomy {
       let ra = h * .pi / 12
       let dec = d * .pi / 180
       return enuTowardCelestial(raRad: ra, decRad: dec, observer: observer, at: date)
+    case .planet:
+      guard let pid = target.planetId else { return nil }
+      let jd = julianDayUTC(date)
+      let (ra, dec) = planetGeocentricRADecRadians(pid, julianDay: jd)
+      return enuTowardCelestial(raRad: ra, decRad: dec, observer: observer, at: date)
     case .magnetic_north:
       return WorldMagneticModel.fieldDirectionENUUnit(
         latitudeDeg: observer.latitude,
@@ -82,6 +87,9 @@ enum TopocentricAstronomy {
       (ra, dec) = sunGeocentricRADecRadians(julianDay: jd)
     case .moon:
       (ra, dec) = LunarEphemeris.moonGeocentricRADecRadians(julianDay: jd)
+    case .planet:
+      guard let pid = target.planetId else { return nil }
+      (ra, dec) = planetGeocentricRADecRadians(pid, julianDay: jd)
     case .fixed_star:
       guard let h = target.raHours, let d = target.decDegrees else { return nil }
       ra = h * .pi / 12
@@ -164,5 +172,125 @@ enum TopocentricAstronomy {
     while a > .pi { a -= 2 * .pi }
     while a < -.pi { a += 2 * .pi }
     return a
+  }
+
+  // MARK: - Simplified planetary ephemeris
+
+  private struct OrbitalElements {
+    let a: Double   // semi-major axis (AU)
+    let e: Double   // eccentricity
+    let I: Double   // inclination (deg)
+    let L: Double   // mean longitude (deg)
+    let wBar: Double // longitude of perihelion (deg)
+    let omega: Double // longitude of ascending node (deg)
+  }
+
+  /// Mean orbital elements at J2000 + rates per century (JPL approximations, valid ~1800–2050).
+  private static func meanElements(_ planet: CelestialTarget.PlanetId, T: Double) -> OrbitalElements {
+    switch planet {
+    case .mercury:
+      return OrbitalElements(
+        a: 0.38709927 + 0.00000037 * T, e: 0.20563593 + 0.00001906 * T,
+        I: 7.00497902 - 0.00594749 * T, L: revDeg(252.25032350 + 149472.67411175 * T),
+        wBar: 77.45779628 + 0.16047689 * T, omega: 48.33076593 - 0.12534081 * T)
+    case .venus:
+      return OrbitalElements(
+        a: 0.72333566 + 0.00000390 * T, e: 0.00677672 - 0.00004107 * T,
+        I: 3.39467605 - 0.00078890 * T, L: revDeg(181.97909950 + 58517.81538729 * T),
+        wBar: 131.60246718 + 0.00268329 * T, omega: 76.67984255 - 0.27769418 * T)
+    case .mars:
+      return OrbitalElements(
+        a: 1.52371034 + 0.00001847 * T, e: 0.09339410 + 0.00007882 * T,
+        I: 1.84969142 - 0.00813131 * T, L: revDeg(-4.55343205 + 19140.30268499 * T),
+        wBar: -23.94362959 + 0.44441088 * T, omega: 49.55953891 - 0.29257343 * T)
+    case .jupiter:
+      return OrbitalElements(
+        a: 5.20288700 - 0.00011607 * T, e: 0.04838624 - 0.00013253 * T,
+        I: 1.30439695 - 0.00183714 * T, L: revDeg(34.39644051 + 3034.74612775 * T),
+        wBar: 14.72847983 + 0.21252668 * T, omega: 100.47390909 + 0.20469106 * T)
+    case .saturn:
+      return OrbitalElements(
+        a: 9.53667594 - 0.00125060 * T, e: 0.05386179 - 0.00050991 * T,
+        I: 2.48599187 + 0.00193609 * T, L: revDeg(49.95424423 + 1222.49362201 * T),
+        wBar: 92.59887831 - 0.41897216 * T, omega: 113.66242448 - 0.28867794 * T)
+    }
+  }
+
+  /// Geocentric equatorial RA/Dec (radians) for a naked-eye planet.
+  static func planetGeocentricRADecRadians(_ planet: CelestialTarget.PlanetId, julianDay: Double) -> (Double, Double) {
+    let T = (julianDay - 2_451_545.0) / 36_525.0
+    let el = meanElements(planet, T: T)
+
+    let M = revDeg(el.L - el.wBar) * .pi / 180
+    let E = solveKepler(M: M, e: el.e)
+    let xOrb = el.a * (cos(E) - el.e)
+    let yOrb = el.a * sqrt(1 - el.e * el.e) * sin(E)
+
+    let w = (el.wBar - el.omega) * .pi / 180
+    let Om = el.omega * .pi / 180
+    let Inc = el.I * .pi / 180
+
+    let cosW = cos(w); let sinW = sin(w)
+    let cosO = cos(Om); let sinO = sin(Om)
+    let cosI = cos(Inc); let sinI = sin(Inc)
+
+    let px1 = cosW * cosO - sinW * sinO * cosI
+    let px2 = -sinW * cosO - cosW * sinO * cosI
+    let py1 = cosW * sinO + sinW * cosO * cosI
+    let py2 = -sinW * sinO + cosW * cosO * cosI
+    let xEcl = px1 * xOrb + px2 * yOrb
+    let yEcl = py1 * xOrb + py2 * yOrb
+    let zEcl = sinW * sinI * xOrb + cosW * sinI * yOrb
+
+    let earthEl = meanElements_Earth(T: T)
+    let Me = revDeg(earthEl.L - earthEl.wBar) * .pi / 180
+    let Ee = solveKepler(M: Me, e: earthEl.e)
+    let xeOrb = earthEl.a * (cos(Ee) - earthEl.e)
+    let yeOrb = earthEl.a * sqrt(1 - earthEl.e * earthEl.e) * sin(Ee)
+
+    let we = (earthEl.wBar - earthEl.omega) * .pi / 180
+    let Oe = earthEl.omega * .pi / 180
+    let Ie = earthEl.I * .pi / 180
+    let cosWe = cos(we); let sinWe = sin(we)
+    let cosOe = cos(Oe); let sinOe = sin(Oe)
+    let cosIe = cos(Ie); let sinIe = sin(Ie)
+
+    let ex1 = cosWe * cosOe - sinWe * sinOe * cosIe
+    let ex2 = -sinWe * cosOe - cosWe * sinOe * cosIe
+    let ey1 = cosWe * sinOe + sinWe * cosOe * cosIe
+    let ey2 = -sinWe * sinOe + cosWe * cosOe * cosIe
+    let xeEcl = ex1 * xeOrb + ex2 * yeOrb
+    let yeEcl = ey1 * xeOrb + ey2 * yeOrb
+    let zeEcl = sinWe * sinIe * xeOrb + cosWe * sinIe * yeOrb
+
+    let dx = xEcl - xeEcl
+    let dy = yEcl - yeEcl
+    let dz = zEcl - zeEcl
+
+    let eps = (23.4392911111 - 0.013004167 * T) * .pi / 180
+    let xEq = dx
+    let yEq = dy * cos(eps) - dz * sin(eps)
+    let zEq = dy * sin(eps) + dz * cos(eps)
+
+    let ra = atan2(yEq, xEq)
+    let dec = atan2(zEq, sqrt(xEq * xEq + yEq * yEq))
+    return (ra, dec)
+  }
+
+  private static func meanElements_Earth(T: Double) -> OrbitalElements {
+    OrbitalElements(
+      a: 1.00000261 + 0.00000562 * T, e: 0.01671123 - 0.00004392 * T,
+      I: -0.00001531 - 0.01294668 * T, L: revDeg(100.46457166 + 35999.37244981 * T),
+      wBar: 102.93768193 + 0.32327364 * T, omega: 0.0)
+  }
+
+  private static func solveKepler(M: Double, e: Double) -> Double {
+    var E = M
+    for _ in 0 ..< 15 {
+      let dE = (M - E + e * sin(E)) / (1 - e * cos(E))
+      E += dE
+      if abs(dE) < 1e-12 { break }
+    }
+    return E
   }
 }

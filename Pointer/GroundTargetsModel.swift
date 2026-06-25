@@ -11,7 +11,7 @@ struct GroundTarget: Decodable, Identifiable, Hashable {
   let group: String
   let latitude: Double
   let longitude: Double
-  let notes: String
+  let notes: String?
   let sources: [String]
 }
 
@@ -29,7 +29,7 @@ enum GroundTargetsBundle {
         {
           "id": "fallback.north_pole",
           "displayName": "Geographic North Pole",
-          "group": "seed_plan",
+          "group": "poles",
           "latitude": 90.0,
           "longitude": 0.0,
           "notes": "Embedded fallback — GroundTargets.json was missing or invalid in the bundle.",

@@ -13,7 +13,7 @@ final class AimSession: ObservableObject {
       }
     }
 
-    var caption: String {
+    var caption: String? {
       switch self {
       case .ground(let t): return t.notes
       case .celestial(let t): return t.notes
@@ -42,10 +42,8 @@ final class AimSession: ObservableObject {
   private static let lastTargetKey = "pointer.lastSelectedTarget"
 
   private static let groundGroupOrder = [
-    "seven_ancient_wonders",
-    "new7_wonders_winner",
-    "new7_finalist",
-    "seed_plan",
+    "places",
+    "poles",
   ]
 
   init() {
@@ -53,10 +51,12 @@ final class AimSession: ObservableObject {
     celestialCatalog = CelestialTargetsBundle.loadTargets()
 
     let defaultMode: AimMode
-    if let firstGround = groundCatalog.first {
-      defaultMode = .ground(firstGround)
+    if let sun = celestialCatalog.first(where: { $0.kind == .sun }) {
+      defaultMode = .celestial(sun)
     } else if let firstCelestial = celestialCatalog.first {
       defaultMode = .celestial(firstCelestial)
+    } else if let firstGround = groundCatalog.first {
+      defaultMode = .ground(firstGround)
     } else {
       preconditionFailure("Both GroundTargets.json and CelestialTargets.json failed to load any targets.")
     }
@@ -128,10 +128,8 @@ final class AimSession: ObservableObject {
 
   private static func groundSectionTitle(_ key: String) -> String {
     switch key {
-    case "seven_ancient_wonders": return "Seven ancient wonders"
-    case "new7_wonders_winner": return "New 7 Wonders · winners"
-    case "new7_finalist": return "New 7 Wonders · finalists"
-    case "seed_plan": return "More places"
+    case "places": return "Places"
+    case "poles": return "Poles"
     default: return key.replacingOccurrences(of: "_", with: " ").capitalized
     }
   }
@@ -158,8 +156,8 @@ struct TargetPickerExpando: View {
               .foregroundStyle(Color.white)
               .multilineTextAlignment(.leading)
               .shadow(color: .black.opacity(0.45), radius: 3, x: 0, y: 1)
-            if !session.pickerExpanded {
-              Text(session.aimMode.caption)
+            if !session.pickerExpanded, let caption = session.aimMode.caption {
+              Text(caption)
                 .font(.subheadline.weight(.medium))
                 .foregroundStyle(Color.white.opacity(0.92))
                 .fixedSize(horizontal: false, vertical: true)
