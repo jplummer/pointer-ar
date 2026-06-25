@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: #c9cec8; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  ::selection { background: #d63d36; color: #fff; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</helmet>
+
+<div id="study" style="font-family: system-ui, -apple-system, sans-serif; color: #2a2a2a; background: #d3d8d2; min-height: 100vh; line-height: 1.5;">
+  <div style="max-width: 1056px; margin: 0 auto; padding: 80px 32px 120px;">
+
+    <!-- ===== MASTHEAD ===== -->
+    <header style="border-bottom: 1px solid #c4c9c3; padding-bottom: 36px; margin-bottom: 8px;">
+      <div style="display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap;">
+        <h1 style="font-size: 64px; font-weight: 100; letter-spacing: -0.03em; margin: 0; line-height: 1; color: #1c1c1c;">Pointer</h1>
+        <p style="margin: 0; font-style: italic; font-size: 17px; color: #5a5a5a;">arrow geometry study</p>
+      </div>
+      <p style="max-width: 60ch; margin: 26px 0 0; font-size: 17px; color: #2a2a2a;">Pointer overlays a single arrow on the live camera and rotates it toward a target — a landmark, a satellite, a bearing. The arrow has one job, say which way, and two hard cases: when it points straight at you, and straight away. What follows is four interpretations of that brief, each a vector drawn as a real object rather than a flat glyph, and each engineered so the two hard cases fall out of the geometry on their own.</p>
+    </header>
+
+    <!-- ===== 01 NOTATION ===== -->
+    <section style="margin-top: 76px;">
+      <div style="font: 500 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.08em; color: #d63d36; margin-bottom: 14px;">01 — NOTATION</div>
+      <h2 style="font-size: 32px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px; color: #1c1c1c;">The two degenerate views</h2>
+      <p style="max-width: 62ch; margin: 18px 0 0; font-size: 17px;">Seen end-on, an arrow loses its length and collapses to its cross-section. Pointer turns that liability into the readout. Aimed at the camera, the tip resolves to a point inside its own circular section — the engineer's <span style="font-family: ui-monospace, monospace;">⊙</span>, a vector out of the page. Aimed away, the tail resolves to a cross inside that same circle — <span style="font-family: ui-monospace, monospace;">⊗</span>, a vector into the page. Neither symbol is drawn. The cone makes the dot — its point tipped in a single accent color so “toward” reads at a glance — and the cruciform tail makes the cross.</p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #c4c9c3; border: 1px solid #c4c9c3; margin-top: 34px;">
+        <figure style="margin: 0; position: relative; background: #c7ccce;">
+          <canvas data-fig="dart" data-view="head" style="display: block; width: 100%; height: 230px;"></canvas>
+          <figcaption style="position: absolute; left: 12px; bottom: 10px; font: 500 12px/1.4 ui-monospace, monospace; letter-spacing: 0.03em; color: #2f3438;"><span style="font-size: 15px;">⊙</span> &nbsp;toward — out of page</figcaption>
+        </figure>
+        <figure style="margin: 0; position: relative; background: #c7ccce;">
+          <canvas data-fig="dart" data-view="tail" style="display: block; width: 100%; height: 230px;"></canvas>
+          <figcaption style="position: absolute; left: 12px; bottom: 10px; font: 500 12px/1.4 ui-monospace, monospace; letter-spacing: 0.03em; color: #2f3438;"><span style="font-size: 15px;">⊗</span> &nbsp;away — into page</figcaption>
+        </figure>
+      </div>
+      <p style="max-width: 62ch; margin: 16px 0 0; font-size: 14px; color: #5a5a5a; font-style: italic;">Both plates above are the same arrow, photographed down its own axis. No special-case rendering — only the model, rotated.</p>
+    </section>
+
+    <!-- ===== 02 SHADING ===== -->
+    <section style="margin-top: 76px;">
+      <div style="font: 500 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.08em; color: #d63d36; margin-bottom: 14px;">02 — SHADING &amp; LEGIBILITY</div>
+      <h2 style="font-size: 32px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px; color: #1c1c1c;">Constant, and never of the scene</h2>
+      <div style="display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 40px; align-items: start; margin-top: 22px;">
+        <div>
+          <p style="margin: 0; font-size: 17px;">One matte material, lit from a fixed point in the arrow's <em>own</em> frame. Scene light never reaches it, so it looks identical at noon and at midnight and never passes for a thing in the photograph. Because the light is pinned to the arrow, the shading stays constant — a smooth bright-to-dark roll from top to underside — which is how elevation reads at a glance, with a single accent tip marking the nose.</p>
+          <p style="margin: 18px 0 0; font-size: 17px;">The surface is smooth and faintly glossy — enough modeling to read as a solid, machined object rather than a flat glyph — while the even matte finish and hard accent keep it unmistakably synthetic against any photograph.</p>
+          <div style="margin-top: 22px; font: 500 12.5px/1.9 ui-monospace, monospace; color: #5a5a5a;">
+            <div style="display: flex; gap: 12px;"><span style="color: #d63d36;">·</span> body — smooth matte, view-independent</div>
+            <div style="display: flex; gap: 12px;"><span style="color: #d63d36;">·</span> accent — one warm tone at nose &amp; tail</div>
+            <div style="display: flex; gap: 12px;"><span style="color: #d63d36;">·</span> no cast shadow, no depth-of-field blur</div>
+          </div>
+        </div>
+        <figure style="margin: 0;">
+          <div style="border: 1px solid #c4c9c3;">
+            <canvas data-fig="spindle" data-view="threeq" data-bg="split" style="display: block; width: 100%; height: 300px;"></canvas>
+          </div>
+          <figcaption style="margin-top: 10px; font: 500 12px/1.5 ui-monospace, monospace; color: #5a5a5a;">Same arrow, one frame, split field — reads on bright and dark alike.</figcaption>
+        </figure>
+      </div>
+
+      <!-- elevation strip -->
+      <p style="max-width: 62ch; margin: 40px 0 0; font-size: 17px;">Elevation is never ambiguous: the shaft tilts out of the horizon plane and the lit top face turns toward or away from you.</p>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #c4c9c3; border: 1px solid #c4c9c3; margin-top: 18px;">
+        <figure style="margin: 0; position: relative; background: #c7ccce;">
+          <canvas data-fig="needle" data-view="elev" data-elev="-0.72" style="display: block; width: 100%; height: 168px;"></canvas>
+          <figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #2f3438;">−40° below</figcaption>
+        </figure>
+        <figure style="margin: 0; position: relative; background: #c7ccce;">
+          <canvas data-fig="needle" data-view="elev" data-elev="0" style="display: block; width: 100%; height: 168px;"></canvas>
+          <figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #2f3438;">level</figcaption>
+        </figure>
+        <figure style="margin: 0; position: relative; background: #c7ccce;">
+          <canvas data-fig="needle" data-view="elev" data-elev="0.72" style="display: block; width: 100%; height: 168px;"></canvas>
+          <figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #2f3438;">+40° above</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ===== 03 INSPECT ===== -->
+    <section style="margin-top: 76px;">
+      <div style="font: 500 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.08em; color: #d63d36; margin-bottom: 14px;">03 — INSPECT</div>
+      <h2 style="font-size: 32px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px; color: #1c1c1c;">Turn each one in the hand</h2>
+      <p style="max-width: 62ch; margin: 18px 0 22px; font-size: 17px;">Drag to orbit. Every angle is the same model under the same light — the end-on symbols are just two stops on the way around.</p>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px;" id="vbtns">
+        <button data-vbtn="needle" style="font: 500 13px/1 system-ui, sans-serif; letter-spacing: 0.01em; padding: 10px 16px; background: transparent; color: #2a2a2a; border: 1px solid #b9bdb8; cursor: pointer;">Needle</button>
+        <button data-vbtn="spindle" style="font: 500 13px/1 system-ui, sans-serif; letter-spacing: 0.01em; padding: 10px 16px; background: transparent; color: #2a2a2a; border: 1px solid #b9bdb8; cursor: pointer;">Spindle</button>
+        <button data-vbtn="dart" style="font: 500 13px/1 system-ui, sans-serif; letter-spacing: 0.01em; padding: 10px 16px; background: #2a2a2a; color: #fff; border: 1px solid #2a2a2a; cursor: pointer;">Fletched dart</button>
+        <button data-vbtn="gauge" style="font: 500 13px/1 system-ui, sans-serif; letter-spacing: 0.01em; padding: 10px 16px; background: transparent; color: #2a2a2a; border: 1px solid #b9bdb8; cursor: pointer;">Banded gauge</button>
+      </div>
+      <div style="border: 1px solid #c4c9c3; background: #1b1f23;">
+        <canvas id="viewer" style="display: block; width: 100%; height: 400px; cursor: grab;"></canvas>
+      </div>
+    </section>
+
+    <!-- ===== CONCEPTS HEADER ===== -->
+    <section style="margin-top: 92px;">
+      <div style="font: 500 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.08em; color: #d63d36; margin-bottom: 14px;">04 — FOUR GEOMETRIES</div>
+      <h2 style="font-size: 32px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px; color: #1c1c1c;">Four readings of one vector</h2>
+      <p style="max-width: 62ch; margin: 18px 0 0; font-size: 17px;">Each is shown as four constant-shaded plates — side, end-on toward, end-on away, and three-quarter — at a shared scale. Dimensions are in scene units (the live model is normalized to roughly the same overall length).</p>
+    </section>
+
+    <!-- ===== CONCEPT A — NEEDLE ===== -->
+    <section style="margin-top: 56px; padding-top: 40px; border-top: 1px solid #c4c9c3;">
+      <div style="display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;">
+        <h3 style="font-size: 24px; font-weight: 600; letter-spacing: -0.01em; margin: 0; color: #1c1c1c;">A · Needle</h3>
+        <span style="font: 400 16px/1 system-ui, sans-serif; font-style: italic; color: #5a5a5a;">slim, precise, minimum occlusion</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #c4c9c3; border: 1px solid #c4c9c3; margin-top: 22px;">
+        <figure style="margin: 0; position: relative; background: #c7ccce;"><canvas data-fig="needle" data-view="side" style="display: block; width: 100%; height: 196px;"></canvas><figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #2f3438;">side</figcaption></figure>
+        <figure style="margin: 0; position: relative; background: #c7ccce;"><canvas data-fig="needle" data-view="head" style="display: block; width: 100%; height: 196px;"></canvas><figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #2f3438;">toward ⊙</figcaption></figure>
+        <figure style="margin: 0; position: relative; background: #c7ccce;"><canvas data-fig="needle" data-view="tail" style="display: block; width: 100%; height: 196px;"></canvas><figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #2f3438;">away ⊗</figcaption></figure>
+        <figure style="margin: 0; position: relative; background: #c7ccce;"><canvas data-fig="needle" data-view="threeq" style="display: block; width: 100%; height: 196px;"></canvas><figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #2f3438;">3/4</figcaption></figure>
+      </div>
+      <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; margin-top: 26px;">
+        <p style="margin: 0; font-size: 16px;">The least arrow that still reads. A near-constant 0.12-unit shaft occludes as little of the scene behind it as possible, and a long, narrow cone removes all doubt about which end leads. The tail is four flat cruciform vanes inside a thin nock ring — they do nothing aerodynamic, they exist so that end-on the tail resolves cleanly to <span style="font-family: ui-monospace, monospace;">⊗</span>. Choose this when the priority is seeing <em>through</em> the overlay.</p>
+        <div style="font: 500 12.5px/1.95 ui-monospace, monospace; color: #4a4f53; border-left: 2px solid #d0d0d0; padding-left: 18px;">
+          <div>shaft&nbsp;&nbsp;⌀0.10–0.13 ×&nbsp;2.00</div>
+          <div>tip&nbsp;&nbsp;&nbsp;&nbsp;⌀0.38 ×&nbsp;0.74&nbsp;&nbsp;(14°)</div>
+          <div>tail&nbsp;&nbsp;&nbsp;4 vanes · ring&nbsp;⌀0.65</div>
+          <div style="color: #8a8f88;">─────────────</div>
+          <div>length&nbsp;2.74</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CONCEPT B — SPINDLE ===== -->
+    <section style="margin-top: 56px; padding-top: 40px; border-top: 1px solid #c4c9c3;">
+      <div style="display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;">
+        <h3 style="font-size: 24px; font-weight: 600; letter-spacing: -0.01em; margin: 0; color: #1c1c1c;">B · Spindle</h3>
+        <span style="font: 400 16px/1 system-ui, sans-serif; font-style: italic; color: #5a5a5a;">tapered shaft, direction in every section</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #c4c9c3; border: 1px solid #c4c9c3; margin-top: 22px;">
+        <figure style="margin: 0; position: relative; background: #c7ccce;"><canvas data-fig="spindle" data-view="side" style="display: block; width: 100%; height: 196px;"></canvas><figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #2f3438;">side</figcaption></figure>
+        <figure style="margin: 0; position: relative; background: #c7ccce;"><canvas data-fig="spindle" data-view="head" style="display: block; width: 100%; height: 196px;"></canvas><figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #2f3438;">toward ⊙</figcaption></figure>
+        <figure style="margin: 0; position: relative; background: #c7ccce;"><canvas data-fig="spindle" data-view="tail" style="display: block; width: 100%; height: 196px;"></canvas><figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #2f3438;">away ⊗</figcaption></figure>
+        <figure style="margin: 0; position: relative; background: #c7ccce;"><canvas data-fig="spindle" data-view="threeq" style="display: block; width: 100%; height: 196px;"></canvas><figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #2f3438;">3/4</figcaption></figure>
+      </div>
+      <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; margin-top: 26px;">
+        <p style="margin: 0; font-size: 16px;">A shaft that tapers from ⌀0.31 at the nock to ⌀0.12 under the tip. The taper does the work color isn't allowed to: every cross-section is fractionally larger toward the tail, so direction is legible from the side even where both ends are hidden behind UI. The tail is a turned collar with a cross milled into its face — machined, not decorated. The most instrument-like of the four.</p>
+        <div style="font: 500 12.5px/1.95 ui-monospace, monospace; color: #4a4f53; border-left: 2px solid #d0d0d0; padding-left: 18px;">
+          <div>shaft&nbsp;&nbsp;⌀0.31→0.12 ×&nbsp;2.00</div>
+          <div>tip&nbsp;&nbsp;&nbsp;&nbsp;⌀0.48 ×&nbsp;0.62</div>
+          <div>tail&nbsp;&nbsp;&nbsp;collar ⌀0.60 ×&nbsp;0.16</div>
+          <div style="color: #8a8f88;">─────────────</div>
+          <div>length&nbsp;2.62</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CONCEPT C — DART ===== -->
+    <section style="margin-top: 56px; padding-top: 40px; border-top: 1px solid #c4c9c3;">
+      <div style="display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;">
+        <h3 style="font-size: 24px; font-weight: 600; letter-spacing: -0.01em; margin: 0; color: #1c1c1c;">C · Fletched dart</h3>
+        <span style="font: 400 16px/1 system-ui, sans-serif; font-style: italic; color: #5a5a5a;">aerodynamic — the head draws the circle, no ring</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #c4c9c3; border: 1px solid #c4c9c3; margin-top: 22px;">
+        <figure style="margin: 0; position: relative; background: #c7ccce;"><canvas data-fig="dart" data-view="side" style="display: block; width: 100%; height: 196px;"></canvas><figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #2f3438;">side</figcaption></figure>
+        <figure style="margin: 0; position: relative; background: #c7ccce;"><canvas data-fig="dart" data-view="head" style="display: block; width: 100%; height: 196px;"></canvas><figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #2f3438;">toward ⊙</figcaption></figure>
+        <figure style="margin: 0; position: relative; background: #c7ccce;"><canvas data-fig="dart" data-view="tail" style="display: block; width: 100%; height: 196px;"></canvas><figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #2f3438;">away ⊗</figcaption></figure>
+        <figure style="margin: 0; position: relative; background: #c7ccce;"><canvas data-fig="dart" data-view="threeq" style="display: block; width: 100%; height: 196px;"></canvas><figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #2f3438;">3/4</figcaption></figure>
+      </div>
+      <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; margin-top: 26px;">
+        <p style="margin: 0; font-size: 16px;">The refinement, and the front-runner. The ring is gone — the head supplies the circle. Seen end-on from behind, the cone base reads as the disk and the four slim vanes read as the cross, so <span style="font-family: ui-monospace, monospace;">⊗</span> resolves with nothing added. The shaft is a slim constant rod — no taper — so it hides as little of the scene as possible, and the small sharp head — its point tipped in accent — turns to a clean <span style="font-family: ui-monospace, monospace;">⊙</span> with a colored dot dead-center when it faces you. Less hardware, more arrow.</p>
+        <div style="font: 500 12.5px/1.95 ui-monospace, monospace; color: #4a4f53; border-left: 2px solid #d0d0d0; padding-left: 18px;">
+          <div>shaft&nbsp;&nbsp;⌀0.12 ×&nbsp;1.90&nbsp;&nbsp;constant</div>
+          <div>head&nbsp;&nbsp;&nbsp;⌀0.32 ×&nbsp;0.80&nbsp;&nbsp;(11°)</div>
+          <div>tail&nbsp;&nbsp;&nbsp;4 slim vanes · no ring</div>
+          <div style="color: #8a8f88;">─────────────</div>
+          <div>length&nbsp;2.70</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CONCEPT D — GAUGE ===== -->
+    <section style="margin-top: 56px; padding-top: 40px; border-top: 1px solid #c4c9c3;">
+      <div style="display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;">
+        <h3 style="font-size: 24px; font-weight: 600; letter-spacing: -0.01em; margin: 0; color: #1c1c1c;">D · Banded gauge</h3>
+        <span style="font: 400 16px/1 system-ui, sans-serif; font-style: italic; color: #5a5a5a;">the shaft as a measuring instrument</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #c4c9c3; border: 1px solid #c4c9c3; margin-top: 22px;">
+        <figure style="margin: 0; position: relative; background: #c7ccce;"><canvas data-fig="gauge" data-view="side" style="display: block; width: 100%; height: 196px;"></canvas><figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #2f3438;">side</figcaption></figure>
+        <figure style="margin: 0; position: relative; background: #c7ccce;"><canvas data-fig="gauge" data-view="head" style="display: block; width: 100%; height: 196px;"></canvas><figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #2f3438;">toward ⊙</figcaption></figure>
+        <figure style="margin: 0; position: relative; background: #c7ccce;"><canvas data-fig="gauge" data-view="tail" style="display: block; width: 100%; height: 196px;"></canvas><figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #2f3438;">away ⊗</figcaption></figure>
+        <figure style="margin: 0; position: relative; background: #c7ccce;"><canvas data-fig="gauge" data-view="threeq" style="display: block; width: 100%; height: 196px;"></canvas><figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #2f3438;">3/4</figcaption></figure>
+      </div>
+      <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; margin-top: 26px;">
+        <p style="margin: 0; font-size: 16px;">The shaft as scale. Three raised index bands turn the constant-radius rod into a ruler and give the eye fixed marks to read rotation and elevation against — useful parallax when the arrow is nearly end-on. The tail is the flattest of the four: a thin disk with a recessed cross, the quietest possible <span style="font-family: ui-monospace, monospace;">⊗</span>. Reads most like a piece of survey equipment, which suits the compass-bezel scene below.</p>
+        <div style="font: 500 12.5px/1.95 ui-monospace, monospace; color: #4a4f53; border-left: 2px solid #d0d0d0; padding-left: 18px;">
+          <div>shaft&nbsp;&nbsp;⌀0.17 ×&nbsp;2.00 · 3&nbsp;bands</div>
+          <div>tip&nbsp;&nbsp;&nbsp;&nbsp;⌀0.47 ×&nbsp;0.62</div>
+          <div>tail&nbsp;&nbsp;&nbsp;cap ⌀0.54 ×&nbsp;0.07</div>
+          <div style="color: #8a8f88;">─────────────</div>
+          <div>length&nbsp;2.62</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 05 ASSEMBLY ===== -->
+    <section style="margin-top: 92px;">
+      <div style="font: 500 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.08em; color: #d63d36; margin-bottom: 14px;">05 — ASSEMBLY</div>
+      <h2 style="font-size: 32px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px; color: #1c1c1c;">Arrow inside the bezel</h2>
+      <p style="max-width: 62ch; margin: 18px 0 26px; font-size: 17px;">The arrow's center sits at the center of a translucent horizon disk — a faint membrane carried all the way to the middle, so the shaft visibly pierces the plane rather than floating above a hole. Degree ticks ring the bezel; the target bearing is a plain double tick at 0°, no accent fill. Disk and arrow move as one rigid unit, the arrow pivoting about the disk center, so its tail dips below the horizon as the tip rises. Shown with the refined dart.</p>
+      <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 1px; background: #c4c9c3; border: 1px solid #c4c9c3;">
+        <figure style="margin: 0; position: relative; background: #161a1e;">
+          <canvas data-fig="dart" data-view="assembly" data-elev="0.42" style="display: block; width: 100%; height: 380px;"></canvas>
+          <figcaption style="position: absolute; left: 12px; bottom: 10px; font: 500 11px/1 ui-monospace, monospace; color: #aeb4b9;">three-quarter · +24° elevation</figcaption>
+        </figure>
+        <figure style="margin: 0; position: relative; background: #161a1e;">
+          <canvas data-fig="dart" data-view="assemblytop" data-elev="0.42" style="display: block; width: 100%; height: 380px;"></canvas>
+          <figcaption style="position: absolute; left: 12px; bottom: 10px; font: 500 11px/1 ui-monospace, monospace; color: #aeb4b9;">near top-down · bearing read</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ===== 06 SPINNER ===== -->
+    <section style="margin-top: 92px;">
+      <div style="font: 500 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.08em; color: #d63d36; margin-bottom: 14px;">06 — GROUND PLANE · SPINNER</div>
+      <h2 style="font-size: 32px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px; color: #1c1c1c;">The waiting state, in plane</h2>
+      <p style="max-width: 62ch; margin: 18px 0 0; font-size: 17px;">Before a fix resolves there is no arrow and no bearing — only a sign the instrument is live. The spinner is the compass bezel stripped to its outer ring: same plane, same scale, thin and white, lying flat on the ground rather than turning in screen space. A ring spun in its own plane shows no motion, so the life comes from a single crisp highlight traveling the rim. No ticks, no fill, no center mark — nothing that could pass for the finished compass. Five readings, shown at the shallow tilt of a phone held up to the scene.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: #c4c9c3; border: 1px solid #c4c9c3; margin-top: 30px;">
+        <figure style="margin: 0; position: relative; background: #14181c;"><canvas data-spin="arc" data-speed="1" style="display: block; width: 100%; height: 158px;"></canvas><span style="position: absolute; left: 11px; top: 9px; font: 500 11px/1 ui-monospace, monospace; color: #7e868f;">A</span><figcaption style="position: absolute; left: 11px; bottom: 9px; font: 500 11px/1 ui-monospace, monospace; color: #c4cace;">arc</figcaption></figure>
+        <figure style="margin: 0; position: relative; background: #14181c;"><canvas data-spin="bug" data-speed="1" style="display: block; width: 100%; height: 158px;"></canvas><span style="position: absolute; left: 11px; top: 9px; font: 500 11px/1 ui-monospace, monospace; color: #7e868f;">B</span><figcaption style="position: absolute; left: 11px; bottom: 9px; font: 500 11px/1 ui-monospace, monospace; color: #c4cace;">bug-seed</figcaption></figure>
+        <figure style="margin: 0; position: relative; background: #14181c;"><canvas data-spin="gap" data-speed="1" style="display: block; width: 100%; height: 158px;"></canvas><span style="position: absolute; left: 11px; top: 9px; font: 500 11px/1 ui-monospace, monospace; color: #7e868f;">C</span><figcaption style="position: absolute; left: 11px; bottom: 9px; font: 500 11px/1 ui-monospace, monospace; color: #c4cace;">break</figcaption></figure>
+        <figure style="margin: 0; position: relative; background: #14181c;"><canvas data-spin="twin" data-speed="1" style="display: block; width: 100%; height: 158px;"></canvas><span style="position: absolute; left: 11px; top: 9px; font: 500 11px/1 ui-monospace, monospace; color: #7e868f;">D</span><figcaption style="position: absolute; left: 11px; bottom: 9px; font: 500 11px/1 ui-monospace, monospace; color: #c4cace;">twin</figcaption></figure>
+        <figure style="margin: 0; position: relative; background: #14181c;"><canvas data-spin="sweep" data-speed="1" style="display: block; width: 100%; height: 158px;"></canvas><span style="position: absolute; left: 11px; top: 9px; font: 500 11px/1 ui-monospace, monospace; color: #7e868f;">E</span><figcaption style="position: absolute; left: 11px; bottom: 9px; font: 500 11px/1 ui-monospace, monospace; color: #c4cace;">sweep</figcaption></figure>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; margin-top: 14px; font: 500 12.5px/1.55 ui-monospace, monospace; color: #5a5a5a;">
+        <div><strong style="color: #2a2a2a; font-weight: 600;">A · arc</strong><br>one bright arc orbits the rim</div>
+        <div><strong style="color: #2a2a2a; font-weight: 600;">B · bug-seed</strong><br>a single tick circles, then parks as the bearing bug</div>
+        <div><strong style="color: #2a2a2a; font-weight: 600;">C · break</strong><br>a full ring with one moving gap</div>
+        <div><strong style="color: #2a2a2a; font-weight: 600;">D · twin</strong><br>two opposed arcs, a gyro cadence</div>
+        <div><strong style="color: #2a2a2a; font-weight: 600;">E · sweep</strong><br>a short arc led by a bright tick — directional</div>
+      </div>
+
+      <h3 style="font-size: 24px; font-weight: 600; letter-spacing: -0.01em; margin: 52px 0 0; color: #1c1c1c;">Two speeds, one motif</h3>
+      <p style="max-width: 62ch; margin: 14px 0 0; font-size: 16px;">Speed carries meaning. Finding position turns once a second; loading orbit data turns half as fast — slow reads as “waiting on the network, not the sensors.” Shown on the sweep — the motif carried into the bezel and transition.</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #c4c9c3; border: 1px solid #c4c9c3; margin-top: 20px;">
+        <figure style="margin: 0; position: relative; background: #14181c;"><canvas data-spin="sweep" data-speed="1" style="display: block; width: 100%; height: 236px;"></canvas><figcaption style="position: absolute; left: 12px; bottom: 10px; font: 500 11px/1 ui-monospace, monospace; color: #c4cace;">finding position · 1 Hz</figcaption></figure>
+        <figure style="margin: 0; position: relative; background: #14181c;"><canvas data-spin="sweep" data-speed="0.5" style="display: block; width: 100%; height: 236px;"></canvas><figcaption style="position: absolute; left: 12px; bottom: 10px; font: 500 11px/1 ui-monospace, monospace; color: #c4cace;">loading orbit data · 0.5 Hz</figcaption></figure>
+      </div>
+
+      <h3 style="font-size: 24px; font-weight: 600; letter-spacing: -0.01em; margin: 52px 0 0; color: #1c1c1c;">This became that</h3>
+      <p style="max-width: 62ch; margin: 14px 0 0; font-size: 16px;">The wait is open-ended — a fix can land in half a second or after a minute — so the spinner free-runs at 1 Hz the whole time. When the fix lands it simply winds down where it is: the highlight decelerates to a stop, the rim sprouts its degree ticks — among them the fixed 0° double-tick at the scale zero and a caret at the target azimuth — the horizon membrane fades in, and the dart fades in through the disk center, pointing to that caret. There’s no mark to hit and nothing to reload — the spinner just becomes the bezel. (The demo varies the search time each pass, so it stops in a different place every loop.)</p>
+      <div style="position: relative; border: 1px solid #c4c9c3; background: #14181c; margin-top: 20px;">
+        <canvas data-spin="transition" style="display: block; width: 100%; height: 380px;"></canvas>
+        <div data-spin-phase style="position: absolute; left: 14px; bottom: 12px; font: 500 11px/1 ui-monospace, monospace; letter-spacing: 0.04em; color: #aeb4b9;">searching</div>
+        <button id="spin-replay" style="position: absolute; right: 12px; bottom: 12px; font: 500 12px/1 system-ui, sans-serif; padding: 8px 14px; background: rgba(255,255,255,0.08); color: #e8ebec; border: 1px solid rgba(255,255,255,0.22); cursor: pointer;">Replay</button>
+      </div>
+    </section>
+
+    <!-- ===== 07 COMPARISON ===== -->
+    <section style="margin-top: 92px;">
+      <div style="font: 500 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.08em; color: #d63d36; margin-bottom: 14px;">07 — PROFILES</div>
+      <h2 style="font-size: 32px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px; color: #1c1c1c;">Silhouettes, one scale</h2>
+      <p style="max-width: 62ch; margin: 18px 0 26px; font-size: 17px;">Stripped to outline, the four read as a family: same length, same job, four different attitudes toward the tail.</p>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #c4c9c3; border: 1px solid #c4c9c3;">
+        <figure style="margin: 0; position: relative; background: #d3d8d2;"><canvas data-fig="needle" data-view="profile" data-style="silhouette" style="display: block; width: 100%; height: 150px;"></canvas><figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #5a5a5a;">A</figcaption></figure>
+        <figure style="margin: 0; position: relative; background: #d3d8d2;"><canvas data-fig="spindle" data-view="profile" data-style="silhouette" style="display: block; width: 100%; height: 150px;"></canvas><figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #5a5a5a;">B</figcaption></figure>
+        <figure style="margin: 0; position: relative; background: #d3d8d2;"><canvas data-fig="dart" data-view="profile" data-style="silhouette" style="display: block; width: 100%; height: 150px;"></canvas><figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #5a5a5a;">C</figcaption></figure>
+        <figure style="margin: 0; position: relative; background: #d3d8d2;"><canvas data-fig="gauge" data-view="profile" data-style="silhouette" style="display: block; width: 100%; height: 150px;"></canvas><figcaption style="position: absolute; left: 10px; bottom: 8px; font: 500 11px/1 ui-monospace, monospace; color: #5a5a5a;">D</figcaption></figure>
+      </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer style="margin-top: 92px; padding-top: 34px; border-top: 1px solid #c4c9c3;">
+      <p style="max-width: 62ch; margin: 0; font-size: 16px; color: #2a2a2a;">All four hit the brief: crisply synthetic, unambiguous in azimuth and elevation, and self-resolving into <span style="font-family: ui-monospace, monospace;">⊙</span> and <span style="font-family: ui-monospace, monospace;">⊗</span> at the poles with no special-case code. The refined <strong>dart (C)</strong> is the pick — a slim untapered shaft, a small sharp head that doubles as the <span style="font-family: ui-monospace, monospace;">⊗</span> circle, four slim vanes, and no ring.</p>
+      <div style="width: 8px; height: 8px; background: #2a2a2a; margin-top: 30px;"></div>
+    </footer>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() {
+    const self = this;
+    let tries = 0;
+    (function wait() {
+      if (window.THREE) {
+        try { self._build(); } catch (e) { console.error('Pointer build error', e); }
+      } else if (tries++ < 250) {
+        setTimeout(wait, 40);
+      } else { console.error('THREE failed to load'); }
+    })();
+    window.addEventListener('resize', () => {
+      clearTimeout(self._rz);
+      self._rz = setTimeout(() => { if (self._renderAll) self._renderAll(); }, 220);
+    });
+  }
+
+  _build() {
+    const T = window.THREE;
+    const root = document.getElementById('study');
+    if (!root) return;
+
+    // ---------- palette ----------
+    const FILL = 0xe7ebec, EDGE = 0x2b3034, SIL = 0x2b3034;
+    const phong = new T.MeshPhongMaterial({ color: FILL, flatShading: false, shininess: 26, specular: 0x2c2c2c });
+    const accentMat = new T.MeshPhongMaterial({ color: 0xd63d36, flatShading: false, shininess: 32, specular: 0x40231f });
+    const sil = new T.MeshBasicMaterial({ color: SIL });
+    const edgeMat = new T.LineBasicMaterial({ color: EDGE });
+
+    // ---------- concept params ----------
+    const concepts = {
+      needle: { shaft: { rt: 0.05, rb: 0.065, len: 2.0 }, tip: { r: 0.19, len: 0.74 }, tail: { type: 'finRing', finLen: 0.5, finT: 0.022, ringR: 0.325, ringTube: 0.022 } },
+      spindle: { shaft: { rt: 0.06, rb: 0.155, len: 2.0 }, tip: { r: 0.24, len: 0.62 }, tail: { type: 'collar', R: 0.30, len: 0.16 } },
+      dart: { shaft: { rt: 0.06, rb: 0.06, len: 1.9 }, tip: { r: 0.16, len: 0.8 }, tail: { type: 'swept', finLen: 0.5, span: 0.08, finT: 0.024 } },
+      gauge: { shaft: { rt: 0.085, rb: 0.085, len: 2.0, bands: [0.30, 0.55, 0.80] }, tip: { r: 0.235, len: 0.62 }, tail: { type: 'cap', R: 0.27, len: 0.07 } }
+    };
+
+    // ---------- builders ----------
+    function fin(part, c, crossMat) {
+      const { shaft, tail } = c, shR = shaft.rb;
+      const finH = tail.ringR - shR;
+      const cx = shR + finH / 2;
+      for (let i = 0; i < 4; i++) {
+        const a = i * Math.PI / 2;
+        const m = part(new T.BoxGeometry(finH, tail.finLen, tail.finT), 24, crossMat);
+        m.position.set(Math.cos(a) * cx, tail.finLen / 2, -Math.sin(a) * cx);
+        m.rotation.y = a;
+      }
+      const r = part(new T.TorusGeometry(tail.ringR, tail.ringTube, 18, 48), 40);
+      r.rotation.x = Math.PI / 2; r.position.y = 0;
+    }
+    function collar(part, c, crossMat) {
+      const { tail } = c;
+      const col = part(new T.CylinderGeometry(tail.R, tail.R, tail.len, 48), 24);
+      col.position.y = -tail.len / 2;
+      // raised cross ribs on the tail face
+      const ribH = 0.05, ribW = 0.05, span = tail.R * 1.7;
+      const y = -tail.len - ribH / 2 + 0.005;
+      const a = part(new T.BoxGeometry(span, ribH, ribW), 24, crossMat); a.position.set(0, y, 0);
+      const b = part(new T.BoxGeometry(ribW, ribH, span), 24, crossMat); b.position.set(0, y, 0);
+    }
+    function swept(part, c, crossMat) {
+      const { shaft, tail } = c, shR = shaft.rb;
+      const innerX = shR - 0.035; // embed the vane root in the shaft so it stays attached up the taper
+      // slim swept vane in X-Y, extruded thin in Z
+      const sh = new T.Shape();
+      sh.moveTo(innerX, -0.05);
+      sh.lineTo(innerX, tail.finLen);
+      sh.lineTo(shR + tail.span * 0.55, tail.finLen * 0.58);
+      sh.lineTo(shR + tail.span, 0.05);
+      sh.lineTo(shR + tail.span, -0.05);
+      sh.closePath();
+      const geo = new T.ExtrudeGeometry(sh, { depth: tail.finT, bevelEnabled: false });
+      geo.translate(0, 0, -tail.finT / 2);
+      for (let i = 0; i < 4; i++) {
+        const a = i * Math.PI / 2;
+        const m = part(geo.clone(), 30, crossMat);
+        m.rotation.y = a;
+      }
+      if (tail.ringR) {
+        const r = part(new T.TorusGeometry(tail.ringR, tail.ringTube, 18, 48), 40);
+        r.rotation.x = Math.PI / 2; r.position.y = 0;
+      }
+    }
+    function cap(part, c, crossMat) {
+      const { tail } = c;
+      const d = part(new T.CylinderGeometry(tail.R, tail.R, tail.len, 48), 24);
+      d.position.y = -tail.len / 2;
+      const ribH = 0.045, ribW = 0.05, span = tail.R * 1.7;
+      const y = -tail.len - ribH / 2 + 0.006;
+      const a = part(new T.BoxGeometry(span, ribH, ribW), 24, crossMat); a.position.set(0, y, 0);
+      const b = part(new T.BoxGeometry(ribW, ribH, span), 24, crossMat); b.position.set(0, y, 0);
+    }
+
+    function buildArrow(id, style) {
+      const c = concepts[id];
+      const g = new T.Group();
+      const fillMat = style === 'silhouette' ? sil : phong;
+      const drawEdges = style !== 'silhouette';
+      function part(geo, thresh, mat) {
+        const m = new T.Mesh(geo, mat || fillMat);
+        g.add(m);
+        return m;
+      }
+      const sh = c.shaft, tp = c.tip;
+      const shaft = part(new T.CylinderGeometry(sh.rt, sh.rb, sh.len, 48), 12);
+      shaft.position.y = sh.len / 2;
+      // head = neutral frustum + an accent-colored point; the point becomes the "toward" dot
+      const cutFrac = 0.24;
+      const fLen = tp.len * (1 - cutFrac), tLen = tp.len * cutFrac, rCut = tp.r * cutFrac;
+      const frustum = part(new T.CylinderGeometry(rCut, tp.r, fLen, 48), 12);
+      frustum.position.y = sh.len + fLen / 2;
+      const tipCone = part(new T.ConeGeometry(rCut, tLen, 48), 8, (style === 'silhouette') ? fillMat : accentMat);
+      tipCone.position.y = sh.len + fLen + tLen / 2;
+      if (sh.bands) sh.bands.forEach(f => {
+        const b = part(new T.TorusGeometry(sh.rt + 0.028, 0.032, 18, 48), 40);
+        b.rotation.x = Math.PI / 2; b.position.y = f * sh.len;
+      });
+      const tl = c.tail;
+      const crossMat = (style === 'silhouette') ? fillMat : accentMat;
+      if (tl.type === 'finRing') fin(part, c, crossMat);
+      else if (tl.type === 'collar') collar(part, c, crossMat);
+      else if (tl.type === 'swept') swept(part, c, crossMat);
+      else if (tl.type === 'cap') cap(part, c, crossMat);
+
+      // recenter on bbox, then aim down +X
+      const box = new T.Box3().setFromObject(g);
+      const ctr = box.getCenter(new T.Vector3());
+      g.position.y = -ctr.y;
+      const outer = new T.Group();
+      outer.add(g);
+      outer.rotation.z = -Math.PI / 2;
+      return outer;
+    }
+
+    function buildRig(id, style) {
+      const rig = new T.Group();
+      rig.add(buildArrow(id, style));
+      const key = new T.DirectionalLight(0xffffff, 0.92);
+      key.position.set(5, 9, 6); const kt = new T.Object3D(); rig.add(kt); key.target = kt; rig.add(key);
+      const fillL = new T.DirectionalLight(0xffffff, 0.34);
+      fillL.position.set(-6, 1.5, -5); const ft = new T.Object3D(); rig.add(ft); fillL.target = ft; rig.add(fillL);
+      return rig;
+    }
+    this._buildRig = buildRig;
+    this._concepts = concepts;
+
+    function buildDisk() {
+      const d = new T.Group();
+      const R = 1.55;
+      // translucent membrane carried all the way to the center, so the shaft visibly pierces it
+      const fillMesh = new T.Mesh(new T.CircleGeometry(R, 80), new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.55, side: T.DoubleSide, depthWrite: false }));
+      fillMesh.rotation.x = -Math.PI / 2; d.add(fillMesh);
+      const pts = [];
+      for (let i = 0; i < 72; i++) {
+        const a = i / 72 * Math.PI * 2;
+        const major = (i % 9 === 0), med = (i % 3 === 0);
+        const inner = R - (major ? 0.20 : med ? 0.11 : 0.06);
+        pts.push(new T.Vector3(Math.cos(a) * R, 0.002, Math.sin(a) * R), new T.Vector3(Math.cos(a) * inner, 0.002, Math.sin(a) * inner));
+      }
+      d.add(new T.LineSegments(new T.BufferGeometry().setFromPoints(pts), new T.LineBasicMaterial({ color: 0x141a1d, transparent: true, opacity: 0.82 })));
+      // 0° target bearing called out by a double tick (no accent fill)
+      const dbl = [];
+      [-0.02, 0.02].forEach(off => {
+        dbl.push(new T.Vector3(Math.cos(off) * R, 0.004, Math.sin(off) * R), new T.Vector3(Math.cos(off) * (R - 0.30), 0.004, Math.sin(off) * (R - 0.30)));
+      });
+      d.add(new T.LineSegments(new T.BufferGeometry().setFromPoints(dbl), new T.LineBasicMaterial({ color: 0x141a1d, transparent: true, opacity: 0.97 })));
+      return d;
+    }
+
+    // ---------- offscreen renderer ----------
+    const renderer = new T.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+    renderer.setPixelRatio(1);
+    renderer.setClearColor(0x000000, 0);
+    const scene = new T.Scene();
+    scene.add(new T.AmbientLight(0xffffff, 0.5));
+    const disk = buildDisk();
+
+    const rigCache = {};
+    function getRig(id, style) {
+      const k = id + '|' + (style || 'solid');
+      if (!rigCache[k]) rigCache[k] = buildRig(id, style);
+      return rigCache[k];
+    }
+
+    const VIEW = {
+      side: { pos: [0, 0, 10], H: 1.78 },
+      head: { pos: [10, 0, 0], H: 0.62 },
+      tail: { pos: [-10, 0, 0], H: 0.62 },
+      threeq: { pos: [6.5, 4.6, 8], H: 1.86 },
+      elev: { pos: [0, 0, 10], H: 1.92 },
+      profile: { pos: [0, 0, 10], H: 1.78 },
+      assembly: { pos: [6, 3.6, 8], H: 1.95 },
+      assemblytop: { pos: [1.4, 9, 1.8], H: 1.78 }
+    };
+
+    function paintBg(ctx, W, H, bg) {
+      if (bg === 'split') {
+        ctx.fillStyle = '#e8ebec'; ctx.fillRect(0, 0, W, Math.round(H * 0.5));
+        ctx.fillStyle = '#191d21'; ctx.fillRect(0, Math.round(H * 0.5), W, H);
+      } else if (bg === 'dark') {
+        ctx.fillStyle = '#161a1e'; ctx.fillRect(0, 0, W, H);
+      } else if (bg === 'none') {
+        ctx.clearRect(0, 0, W, H);
+      } else { ctx.clearRect(0, 0, W, H); }
+    }
+
+    function renderCanvas(cv) {
+      const id = cv.getAttribute('data-fig');
+      const view = cv.getAttribute('data-view');
+      const style = cv.getAttribute('data-style') || 'solid';
+      const bg = cv.getAttribute('data-bg') || '';
+      const elev = parseFloat(cv.getAttribute('data-elev') || '0');
+      const isAssembly = view === 'assembly' || view === 'assemblytop';
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const w = cv.clientWidth || 200, h = cv.clientHeight || 180;
+      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+      const ctx = cv.getContext('2d');
+      paintBg(ctx, cv.width, cv.height, isAssembly ? 'dark' : bg);
+
+      const rig = getRig(id, style === 'silhouette' ? 'silhouette' : 'solid');
+      rig.rotation.set(0, 0, 0);
+      if (elev) rig.rotateOnWorldAxis(new T.Vector3(0, 0, 1), elev);
+      scene.add(rig);
+      if (isAssembly) scene.add(disk);
+
+      const v = VIEW[view] || VIEW.side;
+      const aspect = cv.width / cv.height;
+      const Hh = v.H;
+      const cam = new T.OrthographicCamera(-Hh * aspect, Hh * aspect, Hh, -Hh, 0.1, 100);
+      cam.position.set(v.pos[0], v.pos[1], v.pos[2]);
+      cam.up.set(0, 1, 0); cam.lookAt(0, 0, 0); cam.updateProjectionMatrix();
+
+      renderer.setSize(cv.width, cv.height, false);
+      renderer.render(scene, cam);
+      ctx.drawImage(renderer.domElement, 0, 0, cv.width, cv.height);
+
+      scene.remove(rig);
+      if (isAssembly) scene.remove(disk);
+    }
+
+    this._renderAll = () => {
+      const list = root.querySelectorAll('canvas[data-fig]');
+      list.forEach(cv => { try { renderCanvas(cv); } catch (e) { console.error('render', cv.getAttribute('data-fig'), cv.getAttribute('data-view'), e); } });
+    };
+
+    // Layout-driven render: paint each plate the moment it actually has a size,
+    // and again whenever it changes — robust to font/layout settling and hot reloads.
+    const ro = new ResizeObserver(entries => {
+      entries.forEach(en => {
+        const cv = en.target;
+        if (cv.clientWidth > 0 && cv.clientHeight > 0) {
+          try { renderCanvas(cv); } catch (e) { console.error('render', cv.getAttribute('data-fig'), cv.getAttribute('data-view'), e); }
+        }
+      });
+    });
+    root.querySelectorAll('canvas[data-fig]').forEach(cv => ro.observe(cv));
+    requestAnimationFrame(() => this._renderAll());
+    setTimeout(() => this._renderAll(), 350);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this._renderAll());
+    try { this._initViewer(); } catch (e) { console.error('viewer init', e); }
+    try { this._initSpinners(); } catch (e) { console.error('spinner init', e); }
+  }
+
+  _initViewer() {
+    const T = window.THREE;
+    const cv = document.getElementById('viewer');
+    if (!cv || !this._buildRig) return;
+    const renderer = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    renderer.setClearColor(0x000000, 0);
+    const scene = new T.Scene();
+    scene.add(new T.AmbientLight(0xffffff, 0.5));
+
+    let rig = null, current = 'needle';
+    const cache = {};
+    const setConcept = (id) => {
+      if (rig) scene.remove(rig);
+      if (!cache[id]) cache[id] = this._buildRig(id, 'solid');
+      rig = cache[id]; rig.rotation.set(0, 0, 0); scene.add(rig); current = id;
+    };
+    setConcept('dart');
+
+    let az = -0.7, el = 0.34, auto = true;
+    let cam;
+    const resize = () => {
+      const w = cv.clientWidth || 600, h = cv.clientHeight || 400;
+      renderer.setSize(w, h, false);
+      const aspect = w / h, Hh = 1.78;
+      cam = new T.OrthographicCamera(-Hh * aspect, Hh * aspect, Hh, -Hh, 0.1, 100);
+    };
+    resize();
+    new ResizeObserver(() => resize()).observe(cv);
+
+    let dragging = false, px = 0, py = 0;
+    cv.addEventListener('pointerdown', (e) => { dragging = true; auto = false; px = e.clientX; py = e.clientY; cv.setPointerCapture(e.pointerId); cv.style.cursor = 'grabbing'; });
+    cv.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      az -= (e.clientX - px) * 0.01; el += (e.clientY - py) * 0.01;
+      el = Math.max(-1.4, Math.min(1.4, el)); px = e.clientX; py = e.clientY;
+    });
+    const end = () => { dragging = false; cv.style.cursor = 'grab'; };
+    cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+
+    const btns = document.querySelectorAll('#vbtns [data-vbtn]');
+    btns.forEach(b => b.addEventListener('click', () => {
+      setConcept(b.getAttribute('data-vbtn'));
+      btns.forEach(x => { const on = x === b; x.style.background = on ? '#2a2a2a' : 'transparent'; x.style.color = on ? '#fff' : '#2a2a2a'; x.style.borderColor = on ? '#2a2a2a' : '#b9bdb8'; });
+    }));
+
+    const frame = () => {
+      if (auto) az += 0.0042;
+      const R = 9;
+      cam.position.set(Math.cos(el) * Math.sin(az) * R, Math.sin(el) * R, Math.cos(el) * Math.cos(az) * R);
+      cam.up.set(0, 1, 0); cam.lookAt(0, 0, 0); cam.updateProjectionMatrix();
+      renderer.render(scene, cam);
+      requestAnimationFrame(frame);
+    };
+    frame();
+  }
+
+  _initSpinners() {
+    const T = window.THREE;
+    const root = document.getElementById('study');
+    if (!root) return;
+    const self = this;
+    const canvases = Array.from(root.querySelectorAll('canvas[data-spin]'));
+    if (!canvases.length) return;
+
+    const R = 1.55;
+    const WHITE = 0xeef2f4, FAINT = 0x717a84, DARK = 0x141a1d, BG = '#14181c';
+    const TAU = Math.PI * 2;
+    const TARGET = Math.PI / 2; // parks at the far edge of the ellipse
+
+    const renderer = new T.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+    renderer.setPixelRatio(1);
+    renderer.setClearColor(0x000000, 0);
+    const scene = new T.Scene();
+
+    const ELEV = 0.30, AZIM = 0.16, DIST = 9;
+    function makeCam(aspect) {
+      let H = (R + 0.22) / Math.max(1, aspect);
+      H = Math.max(H, R * Math.sin(ELEV) + 0.42);
+      const c = new T.OrthographicCamera(-H * aspect, H * aspect, H, -H, 0.1, 100);
+      c.position.set(Math.cos(ELEV) * Math.sin(AZIM) * DIST, Math.sin(ELEV) * DIST, Math.cos(ELEV) * Math.cos(AZIM) * DIST);
+      c.up.set(0, 1, 0); c.lookAt(0, 0, 0); c.updateProjectionMatrix();
+      return c;
+    }
+
+    const bright = () => new T.MeshBasicMaterial({ color: WHITE });
+    const faint = () => new T.MeshBasicMaterial({ color: FAINT });
+    function arcMesh(tube, arcFrac, mat) {
+      const arc = TAU * arcFrac;
+      const seg = Math.max(14, Math.round(arcFrac * 220));
+      const m = new T.Mesh(new T.TorusGeometry(R, tube, 14, seg, arc), mat || bright());
+      m.rotation.x = -Math.PI / 2;
+      return m;
+    }
+    function fullRing(tube, mat) {
+      const m = new T.Mesh(new T.TorusGeometry(R, tube, 14, 220), mat || faint());
+      m.rotation.x = -Math.PI / 2;
+      return m;
+    }
+    function tickBar(depth, w, mat) {
+      // radial bar whose OUTER end sits on the rim (+X); scale.x grows it inward
+      const m = new T.Mesh(new T.BoxGeometry(depth, 0.013, w), mat || bright());
+      m.position.set(R - depth / 2, 0.012, 0);
+      m.userData.depth = depth;
+      return m;
+    }
+    function atAz(obj, az) { const g = new T.Group(); g.add(obj); g.rotation.y = az; return g; }
+    function azMarker(mat) {
+      // a slim caret lying in the ground plane, apex pointing OUTWARD to the rim — like the shadow of the arrow's tip
+      const s = new T.Shape();
+      s.moveTo(R - 0.02, 0); s.lineTo(R - 0.28, 0.085); s.lineTo(R - 0.28, -0.085); s.closePath();
+      const m = new T.Mesh(new T.ShapeGeometry(s), mat);
+      m.rotation.x = -Math.PI / 2; m.position.y = 0.013;
+      return m;
+    }
+
+    function buildMotif(motif) {
+      const grp = new T.Group();
+      const spin = new T.Group();
+      grp.add(spin);
+      if (motif === 'arc') {
+        grp.add(fullRing(0.008));
+        spin.add(arcMesh(0.024, 0.2));
+      } else if (motif === 'bug') {
+        grp.add(fullRing(0.008));
+        spin.add(tickBar(0.26, 0.03));
+      } else if (motif === 'gap') {
+        spin.add(arcMesh(0.02, 0.9));
+      } else if (motif === 'twin') {
+        grp.add(fullRing(0.008));
+        spin.add(arcMesh(0.022, 0.16));
+        spin.add(atAz(arcMesh(0.022, 0.16), Math.PI));
+      } else if (motif === 'sweep') {
+        grp.add(fullRing(0.008));
+        spin.add(arcMesh(0.02, 0.12));
+        spin.add(atAz(tickBar(0.22, 0.034), -TAU * 0.12));
+      }
+      return { grp, spin };
+    }
+
+    function buildTransition(cv) {
+      const grp = new T.Group();
+      const ring = fullRing(0.012, new T.MeshBasicMaterial({ color: WHITE, transparent: true, depthWrite: false }));
+      ring.renderOrder = 2; grp.add(ring);
+      // sweep highlight — a trailing arc led by a bright tick; sweepWrap.rotation.y is the LEADING tick's azimuth
+      const seedMat = new T.MeshBasicMaterial({ color: WHITE, transparent: true, depthWrite: false });
+      const arcMat = new T.MeshBasicMaterial({ color: WHITE, transparent: true, depthWrite: false });
+      const arcSpan = 0.14;
+      const sweep = new T.Group();
+      sweep.add(tickBar(0.24, 0.034, seedMat));
+      sweep.add(atAz(arcMesh(0.02, arcSpan, arcMat), 0.01 * TAU));
+      const sweepWrap = new T.Group(); sweepWrap.add(sweep); grp.add(sweepWrap);
+      const mem = new T.Mesh(new T.CircleGeometry(R - 0.004, 96), new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, side: T.DoubleSide, depthWrite: false }));
+      mem.rotation.x = -Math.PI / 2; mem.position.y = -0.006; mem.renderOrder = 1; grp.add(mem); // drawn after the arrow so it tints (not hides) the below-plane half
+      const N = 72;
+      const tickMat = new T.MeshBasicMaterial({ color: DARK, transparent: true, opacity: 0, depthWrite: false });
+      const ticks = [];
+      for (let i = 0; i < N; i++) {
+        const major = (i % 9 === 0), med = (i % 3 === 0);
+        const depth = major ? 0.20 : med ? 0.11 : 0.06;
+        const bar = tickBar(depth, major ? 0.02 : 0.013, tickMat); bar.renderOrder = 2;
+        grp.add(atAz(bar, i / N * TAU));
+        ticks.push(bar);
+      }
+      // the resolved bezel's two static readouts: the fixed scale zero, and a marker at the actual target azimuth
+      const ZERO = TARGET, AZTGT = TARGET - 0.6;
+      [-0.02, 0.02].forEach(off => { const b = tickBar(0.30, 0.022, tickMat); b.renderOrder = 2; grp.add(atAz(b, ZERO + off)); ticks.push(b); }); // double-tick at 0°
+      const azMat = new T.MeshBasicMaterial({ color: DARK, transparent: true, opacity: 0, side: T.DoubleSide, depthWrite: false });
+      const azc = azMarker(azMat); azc.renderOrder = 2; grp.add(atAz(azc, AZTGT)); // caret at the target azimuth
+      // the dart, fading in through the disk center once the bearing resolves — aimed at the target azimuth, tipped up
+      const arrowMats = [];
+      let arrowGrp = null;
+      if (self._buildRig) {
+        const rig = self._buildRig('dart', 'solid');
+        rig.traverse(o => { if (o.isMesh && o.material) { o.material = o.material.clone(); o.material.transparent = true; o.material.opacity = 0; o.material.depthWrite = false; arrowMats.push(o.material); } });
+        rig.rotateOnWorldAxis(new T.Vector3(0, 0, 1), 0.42);
+        arrowGrp = new T.Group(); arrowGrp.add(rig); arrowGrp.rotation.y = AZTGT; arrowGrp.scale.setScalar(0.9); arrowGrp.visible = false; grp.add(arrowGrp);
+      }
+      const phaseEl = cv.parentElement && cv.parentElement.querySelector('[data-spin-phase]');
+      cv.userData = { grp, ring, sweepWrap, seedMat, arcMat, mem, ticks, tickMat, azMat, arrowMats, arrowGrp, st: { name: 'spin', tEnter: performance.now() / 1000, spinFrom: 0, spinDur: 1.2 + Math.random() * 2.0, az: 0, az0: 0, azRest: 0 }, phaseEl };
+      return { cv, kind: 'transition' };
+    }
+
+    const SPIN_W = TAU;            // free-run angular speed (1 Hz) for an unknown, variable search time
+    const RESOLVE = 0.95, ARRIVE = 0.7, HOLD = 1.5, RESET = 0.7;
+    const easeOut = (x) => 1 - Math.pow(1 - x, 2);
+    const easeIO = (x) => x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+    const wrap = (a) => ((a % TAU) + TAU) % TAU;
+
+    function sizeCanvas(cv, dw, dh) {
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const w = cv.clientWidth || dw, h = cv.clientHeight || dh;
+      const cw = Math.round(w * dpr), ch = Math.round(h * dpr);
+      if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; }
+    }
+    function blit(cv, grp) {
+      const ctx = cv.getContext('2d');
+      ctx.fillStyle = BG; ctx.fillRect(0, 0, cv.width, cv.height);
+      scene.add(grp);
+      const cam = makeCam(cv.width / cv.height);
+      renderer.setSize(cv.width, cv.height, false);
+      renderer.render(scene, cam);
+      ctx.drawImage(renderer.domElement, 0, 0, cv.width, cv.height);
+      scene.remove(grp);
+    }
+
+    function drawMotif(it, t) {
+      sizeCanvas(it.cv, 200, 158);
+      it.spin.rotation.y = -t * it.speed * TAU;
+      blit(it.cv, it.grp);
+    }
+
+    function drawTransition(it, t) {
+      const cv = it.cv, u = cv.userData, st = u.st;
+      const tt = t - st.tEnter;
+      const DECEL = SPIN_W * RESOLVE / 2; // coast distance so angular velocity eases ω→0 with no jump
+      let az = st.az, ringOp = 1, arcOp = 1, memOp = 0, tickF = 0, tickOp = 0, seedOp = 1, arrowOp = 0, phase = 'searching';
+      if (st.name === 'spin') {
+        az = st.spinFrom - tt * SPIN_W;            // free-run at 1 Hz for a variable, unknown time
+        phase = 'searching';
+        if (tt >= st.spinDur) { st.az0 = az; st.name = 'resolve'; st.tEnter = t; }
+      } else if (st.name === 'resolve') {
+        const p = Math.min(1, tt / RESOLVE);
+        az = st.az0 - DECEL * easeOut(Math.min(1, p / 0.6));     // winds down to a stop by ~60%
+        st.azRest = az;
+        const fade = Math.min(1, p / 0.42);                      // the highlight fades fully to nothing FIRST
+        ringOp = 1 - fade; seedOp = 1 - fade; arcOp = 1 - fade;
+        const grow = easeIO(Math.max(0, Math.min(1, (p - 0.42) / 0.58)));  // only then do the ticks + membrane grow
+        tickF = grow; tickOp = grow; memOp = 0.35 * grow;
+        phase = 'resolving';
+        if (p >= 1) { st.name = 'arrive'; st.tEnter = t; }
+      } else if (st.name === 'arrive') {
+        az = st.azRest; tickF = 1; tickOp = 1; memOp = 0.35; ringOp = 0; seedOp = 0; arcOp = 0;
+        arrowOp = easeIO(Math.min(1, tt / ARRIVE));
+        phase = 'arrow in';
+        if (tt >= ARRIVE) { st.name = 'hold'; st.tEnter = t; }
+      } else if (st.name === 'hold') {
+        az = st.azRest; tickF = 1; tickOp = 1; memOp = 0.35; ringOp = 0; seedOp = 0; arcOp = 0; arrowOp = 1;
+        phase = 'resolved';
+        if (tt >= HOLD) { st.name = 'reset'; st.tEnter = t; }
+      } else {
+        const p = Math.min(1, tt / RESET);
+        az = st.azRest;                            // spinner returns EXACTLY where it stopped — never elsewhere
+        arrowOp = 1 - Math.min(1, p / 0.35);       // arrow leaves first, over the still-bright membrane — never ghosts dark
+        const back = easeIO(Math.max(0, Math.min(1, (p - 0.32) / 0.68)));
+        tickF = 1 - back; tickOp = 1 - back; memOp = 0.35 * (1 - back);
+        ringOp = back; seedOp = back; arcOp = back;
+        phase = 'searching';
+        if (p >= 1) { st.name = 'spin'; st.tEnter = t; st.spinFrom = st.azRest; st.spinDur = 1.2 + Math.random() * 2.0; }
+      }
+      st.az = az;
+      u.sweepWrap.rotation.y = az;
+      u.seedMat.opacity = seedOp;
+      u.arcMat.opacity = arcOp;
+      u.ring.material.opacity = ringOp;
+      u.mem.material.opacity = memOp;
+      u.tickMat.opacity = tickOp;
+      u.azMat.opacity = tickOp;
+      if (u.arrowGrp) u.arrowGrp.visible = arrowOp > 0.003;
+      for (let k = 0; k < u.arrowMats.length; k++) { u.arrowMats[k].opacity = arrowOp; u.arrowMats[k].depthWrite = arrowOp > 0.985; }
+      for (const b of u.ticks) { b.scale.x = Math.max(0.0001, tickF); b.position.x = R - (b.userData.depth * b.scale.x) / 2; }
+      if (u.phaseEl) u.phaseEl.textContent = phase;
+      sizeCanvas(cv, 400, 380);
+      blit(cv, u.grp);
+    }
+
+    const items = canvases.map(cv => {
+      const motif = cv.getAttribute('data-spin');
+      if (motif === 'transition') return buildTransition(cv);
+      return Object.assign({ cv, kind: 'motif', speed: parseFloat(cv.getAttribute('data-speed') || '1') }, buildMotif(motif));
+    });
+
+    const replay = document.getElementById('spin-replay');
+    if (replay) replay.addEventListener('click', () => {
+      items.forEach(it => { if (it.kind === 'transition') { const s = it.cv.userData.st; s.name = 'spin'; s.tEnter = performance.now() / 1000; s.spinFrom = s.az || 0; s.spinDur = 0.8 + Math.random() * 1.6; } });
+    });
+
+    const loop = () => {
+      const t = performance.now() / 1000;
+      for (const it of items) {
+        try { it.kind === 'transition' ? drawTransition(it, t) : drawMotif(it, t); } catch (e) {}
+      }
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  }
+}
+</script>
+</body>
+</html>

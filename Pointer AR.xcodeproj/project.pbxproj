@@ -39,7 +39,7 @@
 		4ede4131ee0346bfa3948b96 /* GroundTargets.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = GroundTargets.json; sourceTree = "<group>"; };
 		5755b5df937d496181cf65b3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		5a07aba7641a4d39927803e1 /* TargetPickerExpando.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetPickerExpando.swift; sourceTree = "<group>"; };
-		84c1fe7ca6c641d5826150eb /* Pointer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pointer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		84c1fe7ca6c641d5826150eb /* Pointer AR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Pointer AR.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		86569905754e4a41aac08048 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		90e12f3f853e47c5b10415d6 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		91c500686c4f4995b552311d /* SceneKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SceneKit.framework; path = System/Library/Frameworks/SceneKit.framework; sourceTree = SDKROOT; };
@@ -78,7 +78,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3f81af90167e4b6f917d802f /* Pointer */ = {
+		3f81af90167e4b6f917d802f /* Pointer AR */ = {
 			isa = PBXGroup;
 			children = (
 				A6365AB52FECD32800DAAC4E /* Pointer AR.icon */,
@@ -103,13 +103,13 @@
 				d1eadbeef001400182003001 /* CelestialTargets.json */,
 				e9a100014009400182003019 /* WMM_2025.COF */,
 			);
-			path = Pointer;
+			path = "Pointer AR";
 			sourceTree = "<group>";
 		};
 		5df5823551a3418ca6967bbf /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				84c1fe7ca6c641d5826150eb /* Pointer.app */,
+				84c1fe7ca6c641d5826150eb /* Pointer AR.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -128,7 +128,7 @@
 		e3cd2b697e0743e6b553dba7 = {
 			isa = PBXGroup;
 			children = (
-				3f81af90167e4b6f917d802f /* Pointer */,
+				3f81af90167e4b6f917d802f /* Pointer AR */,
 				5df5823551a3418ca6967bbf /* Products */,
 				A638926C2F95A2D10097D72B /* Recovered References */,
 			);
@@ -137,9 +137,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		02813c7c8c4f4265813ecb90 /* Pointer */ = {
+		02813c7c8c4f4265813ecb90 /* Pointer AR */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 926dad36912d4e39bc0207d5 /* Build configuration list for PBXNativeTarget "Pointer" */;
+			buildConfigurationList = 926dad36912d4e39bc0207d5 /* Build configuration list for PBXNativeTarget "Pointer AR" */;
 			buildPhases = (
 				583b80e6d1de47adb4a0e871 /* Sources */,
 				9f22aa77268f4c9298319426 /* Frameworks */,
@@ -149,9 +149,9 @@
 			);
 			dependencies = (
 			);
-			name = Pointer;
+			name = "Pointer AR";
 			productName = Pointer;
-			productReference = 84c1fe7ca6c641d5826150eb /* Pointer.app */;
+			productReference = 84c1fe7ca6c641d5826150eb /* Pointer AR.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -169,7 +169,7 @@
 					};
 				};
 			};
-			buildConfigurationList = d9f9c5eeec22473eb3c2a990 /* Build configuration list for PBXProject "Pointer" */;
+			buildConfigurationList = d9f9c5eeec22473eb3c2a990 /* Build configuration list for PBXProject "Pointer AR" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -182,7 +182,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				02813c7c8c4f4265813ecb90 /* Pointer */,
+				02813c7c8c4f4265813ecb90 /* Pointer AR */,
 			);
 		};
 /* End PBXProject section */
@@ -232,7 +232,7 @@
 		213c1ef7f684452c84478b50 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -244,7 +244,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "Pointer AR shows the camera behind the arrow so you can see the scene you are pointing through.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Pointer AR uses your location to compute directions toward the selected ground or sky target.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = black;
+				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -330,7 +330,7 @@
 		a1c50ec8dbb34eec831da115 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -342,7 +342,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "Pointer AR shows the camera behind the arrow so you can see the scene you are pointing through.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Pointer AR uses your location to compute directions toward the selected ground or sky target.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = black;
+				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -421,7 +421,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		926dad36912d4e39bc0207d5 /* Build configuration list for PBXNativeTarget "Pointer" */ = {
+		926dad36912d4e39bc0207d5 /* Build configuration list for PBXNativeTarget "Pointer AR" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				a1c50ec8dbb34eec831da115 /* Debug */,
@@ -430,7 +430,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		d9f9c5eeec22473eb3c2a990 /* Build configuration list for PBXProject "Pointer" */ = {
+		d9f9c5eeec22473eb3c2a990 /* Build configuration list for PBXProject "Pointer AR" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7f6af7fd64ae4d27abc44198 /* Debug */,

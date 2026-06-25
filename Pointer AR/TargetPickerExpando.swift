@@ -82,13 +82,28 @@ final class AimSession: ObservableObject {
     "celestial_orbit",
   ]
 
+  private static let skyOrder = [
+    "sky.sun", "sky.mercury", "sky.venus", "sky.moon",
+    "sky.mars", "sky.jupiter", "sky.saturn", "sky.polaris",
+  ]
+
   var celestialSections: [(key: String, title: String, targets: [CelestialTarget])] {
     guard !celestialCatalog.isEmpty else { return [] }
     let grouped = Dictionary(grouping: celestialCatalog, by: \.group)
     return Self.celestialGroupOrder.compactMap { key in
       guard let list = grouped[key], !list.isEmpty else { return nil }
-      let sorted = list.sorted {
-        $0.displayName.localizedCaseInsensitiveCompare($1.displayName) == .orderedAscending
+      let sorted: [CelestialTarget]
+      if key == "celestial_sky" {
+        let order = Self.skyOrder
+        sorted = list.sorted { a, b in
+          let ai = order.firstIndex(of: a.id) ?? Int.max
+          let bi = order.firstIndex(of: b.id) ?? Int.max
+          return ai < bi
+        }
+      } else {
+        sorted = list.sorted {
+          $0.displayName.localizedCaseInsensitiveCompare($1.displayName) == .orderedAscending
+        }
       }
       return (key, Self.celestialSectionTitle(key), sorted)
     }

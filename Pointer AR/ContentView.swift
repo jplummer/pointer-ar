@@ -1,3 +1,4 @@
+import AVFoundation
 import CoreLocation
 import SwiftUI
 import UIKit
@@ -49,13 +50,10 @@ struct ContentView: View {
   @StateObject private var previewRotationSync = PreviewRotationState()
   @State private var isInfoPresented = false
   @State private var arrowSceneReady = false
-  /// True once the app has received at least one GPS fix this session.
   @State private var hadGPSFix = false
-  /// Branded cover shown during initialization; dismissed when SceneKit renders.
   @State private var showBrandedCover = true
-  @State private var brandedCoverMinElapsed = false
-  /// Camera opacity animates from 0 to 1 when the branded cover dismisses.
   @State private var cameraOpacity: Double = 0
+  @State private var cameraPermissionResolved = false
   /// Debounces satellite ephemeris refetch when GPS moves; pointer math still uses the latest fix immediately.
   @State private var satellitePrefetchDebounceTask: Task<Void, Never>?
   @Environment(\.openURL) private var openURL
@@ -156,31 +154,28 @@ struct ContentView: View {
         }
       }
     }
-    .onAppear {
+    .task {
+      let cameraStatus = AVCaptureDevice.authorizationStatus(for: .video)
+      if cameraStatus == .notDetermined {
+        _ = await AVCaptureDevice.requestAccess(for: .video)
+      }
+      cameraPermissionResolved = true
       location.begin()
+      try? await Task.sleep(for: .seconds(0.3))
+      dismissBrandedCoverIfReady()
+    }
+    .task {
+      try? await Task.sleep(for: .seconds(4))
+      dismissBrandedCoverIfReady()
+    }
+    .onChange(of: arrowSceneReady) { _, ready in
+      if ready { dismissBrandedCoverIfReady() }
     }
     .onChange(of: scenePhase) { _, phase in
       if phase == .active {
         location.begin()
       } else {
         location.stop()
-      }
-    }
-    .task {
-      try? await Task.sleep(for: .seconds(1))
-      brandedCoverMinElapsed = true
-      dismissBrandedCoverIfReady()
-    }
-    .task {
-      try? await Task.sleep(for: .seconds(3))
-      if !arrowSceneReady {
-        arrowSceneReady = true
-      }
-      dismissBrandedCoverIfReady()
-    }
-    .onChange(of: arrowSceneReady) { _, ready in
-      if ready {
-        dismissBrandedCoverIfReady()
       }
     }
     .sheet(isPresented: $isInfoPresented) {
@@ -426,8 +421,8 @@ struct ContentView: View {
   }
 
   private func dismissBrandedCoverIfReady() {
-    guard showBrandedCover, brandedCoverMinElapsed, arrowSceneReady else { return }
-    withAnimation(.easeInOut(duration: 0.4)) {
+    guard showBrandedCover, cameraPermissionResolved, arrowSceneReady else { return }
+    withAnimation(.easeInOut(duration: 0.6)) {
       showBrandedCover = false
       cameraOpacity = 1
     }
@@ -435,18 +430,14 @@ struct ContentView: View {
 
   private var brandedCoverView: some View {
     ZStack {
-      LinearGradient(
-        colors: [Color(red: 1.0, green: 0.773, blue: 0.929), Color(red: 0.988, green: 0.875, blue: 0.820)],
-        startPoint: .top,
-        endPoint: .bottom
-      )
+      Color.black
       VStack(spacing: 12) {
         Image(systemName: "arrow.up.right")
           .font(.system(size: 48, weight: .light))
-          .foregroundStyle(.black.opacity(0.7))
+          .foregroundStyle(.white.opacity(0.9))
         Text("Pointer AR")
           .font(.title2.weight(.medium))
-          .foregroundStyle(.black.opacity(0.7))
+          .foregroundStyle(.white.opacity(0.9))
       }
     }
     .ignoresSafeArea()

@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "02813c7c8c4f4265813ecb90"
-               BuildableName = "Pointer.app"
-               BlueprintName = "Pointer"
-               ReferencedContainer = "container:Pointer.xcodeproj">
+               BuildableName = "Pointer AR.app"
+               BlueprintName = "Pointer AR"
+               ReferencedContainer = "container:Pointer AR.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -44,9 +44,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "02813c7c8c4f4265813ecb90"
-            BuildableName = "Pointer.app"
-            BlueprintName = "Pointer"
-            ReferencedContainer = "container:Pointer.xcodeproj">
+            BuildableName = "Pointer AR.app"
+            BlueprintName = "Pointer AR"
+            ReferencedContainer = "container:Pointer AR.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -61,9 +61,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "02813c7c8c4f4265813ecb90"
-            BuildableName = "Pointer.app"
-            BlueprintName = "Pointer"
-            ReferencedContainer = "container:Pointer.xcodeproj">
+            BuildableName = "Pointer AR.app"
+            BlueprintName = "Pointer AR"
+            ReferencedContainer = "container:Pointer AR.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
