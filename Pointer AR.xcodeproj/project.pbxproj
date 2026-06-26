@@ -18,6 +18,13 @@
 		8701550f4d06448e9d0d3443 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 941b793d82484e3d927bc554 /* CoreLocation.framework */; };
 		9ed99728c3c4479ba5289292 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90e12f3f853e47c5b10415d6 /* AVFoundation.framework */; };
 		A6365AB62FECD32800DAAC4E /* Pointer AR.icon in Resources */ = {isa = PBXBuildFile; fileRef = A6365AB52FECD32800DAAC4E /* Pointer AR.icon */; };
+		A677C6EE2FED930F00635601 /* bg-field-and-hills.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A677C6E92FED930F00635601 /* bg-field-and-hills.jpg */; };
+		A677C6EF2FED930F00635601 /* bg-rolling-hills.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A677C6EC2FED930F00635601 /* bg-rolling-hills.jpg */; };
+		A677C6F02FED930F00635601 /* bg-golden-city.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A677C6EA2FED930F00635601 /* bg-golden-city.jpg */; };
+		A677C6F12FED930F00635601 /* bg-hills-and-clouds.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A677C6EB2FED930F00635601 /* bg-hills-and-clouds.jpg */; };
+		AA0002001234567890001CDE /* ScreenshotConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001001234567890001CDE /* ScreenshotConfig.swift */; };
+		AA0004001234567890001CDE /* ScreenshotArrowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0003001234567890001CDE /* ScreenshotArrowView.swift */; };
+		AA0006001234567890001CDE /* ScreenshotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0005001234567890001CDE /* ScreenshotView.swift */; };
 		a1b2c3d4e5f6400182003021 /* PointerDisplaySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = a1b2c3d4e5f6400182003020 /* PointerDisplaySettings.swift */; };
 		acf4b27f836d4ec1a070e2cd /* ArrowSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ffcd5b1871dd422ba7fa0e88 /* ArrowSceneView.swift */; };
 		cbea96023cb04776b5095909 /* TargetPickerExpando.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5a07aba7641a4d39927803e1 /* TargetPickerExpando.swift */; };
@@ -47,6 +54,13 @@
 		99a388feac7e4150afe70c22 /* GroundTargetsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroundTargetsModel.swift; sourceTree = "<group>"; };
 		9eb8d4f71a264e528201b284 /* PointerInfoSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointerInfoSheet.swift; sourceTree = "<group>"; };
 		A6365AB52FECD32800DAAC4E /* Pointer AR.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "Pointer AR.icon"; sourceTree = "<group>"; };
+		A677C6E92FED930F00635601 /* bg-field-and-hills.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "bg-field-and-hills.jpg"; sourceTree = "<group>"; };
+		A677C6EA2FED930F00635601 /* bg-golden-city.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "bg-golden-city.jpg"; sourceTree = "<group>"; };
+		A677C6EB2FED930F00635601 /* bg-hills-and-clouds.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "bg-hills-and-clouds.jpg"; sourceTree = "<group>"; };
+		A677C6EC2FED930F00635601 /* bg-rolling-hills.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "bg-rolling-hills.jpg"; sourceTree = "<group>"; };
+		AA0001001234567890001CDE /* ScreenshotConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotConfig.swift; sourceTree = "<group>"; };
+		AA0003001234567890001CDE /* ScreenshotArrowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotArrowView.swift; sourceTree = "<group>"; };
+		AA0005001234567890001CDE /* ScreenshotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotView.swift; sourceTree = "<group>"; };
 		a1b2c3d4e5f6400182003020 /* PointerDisplaySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointerDisplaySettings.swift; sourceTree = "<group>"; };
 		b879f2a7ae0444c7b1fdbf4e /* CameraPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreviewView.swift; sourceTree = "<group>"; };
 		bcc7b015f3654231802c9f4e /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -81,10 +95,14 @@
 		3f81af90167e4b6f917d802f /* Pointer AR */ = {
 			isa = PBXGroup;
 			children = (
+				A677C6ED2FED930F00635601 /* ScreenshotBackgrounds */,
 				A6365AB52FECD32800DAAC4E /* Pointer AR.icon */,
 				df8921e1ddec4df49ff6b8f1 /* PointerApp.swift */,
 				5755b5df937d496181cf65b3 /* ContentView.swift */,
 				ffcd5b1871dd422ba7fa0e88 /* ArrowSceneView.swift */,
+				AA0001001234567890001CDE /* ScreenshotConfig.swift */,
+				AA0003001234567890001CDE /* ScreenshotArrowView.swift */,
+				AA0005001234567890001CDE /* ScreenshotView.swift */,
 				b879f2a7ae0444c7b1fdbf4e /* CameraPreviewView.swift */,
 				99a388feac7e4150afe70c22 /* GroundTargetsModel.swift */,
 				5a07aba7641a4d39927803e1 /* TargetPickerExpando.swift */,
@@ -123,6 +141,17 @@
 				941b793d82484e3d927bc554 /* CoreLocation.framework */,
 			);
 			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		A677C6ED2FED930F00635601 /* ScreenshotBackgrounds */ = {
+			isa = PBXGroup;
+			children = (
+				A677C6E92FED930F00635601 /* bg-field-and-hills.jpg */,
+				A677C6EA2FED930F00635601 /* bg-golden-city.jpg */,
+				A677C6EB2FED930F00635601 /* bg-hills-and-clouds.jpg */,
+				A677C6EC2FED930F00635601 /* bg-rolling-hills.jpg */,
+			);
+			path = ScreenshotBackgrounds;
 			sourceTree = "<group>";
 		};
 		e3cd2b697e0743e6b553dba7 = {
@@ -192,6 +221,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A677C6EE2FED930F00635601 /* bg-field-and-hills.jpg in Resources */,
+				A677C6EF2FED930F00635601 /* bg-rolling-hills.jpg in Resources */,
+				A677C6F02FED930F00635601 /* bg-golden-city.jpg in Resources */,
+				A677C6F12FED930F00635601 /* bg-hills-and-clouds.jpg in Resources */,
 				2da6cdaa30f04ffc93166645 /* Assets.xcassets in Resources */,
 				A6365AB62FECD32800DAAC4E /* Pointer AR.icon in Resources */,
 				0e5e8f66e36649c48121e5c0 /* GroundTargets.json in Resources */,
@@ -223,6 +256,9 @@
 				e9a100014004400182003014 /* LunarEphemeris.swift in Sources */,
 				e9a100014006400182003016 /* TLEKeplerPropagator.swift in Sources */,
 				e9a100014008400182003018 /* SatelliteAimServices.swift in Sources */,
+				AA0002001234567890001CDE /* ScreenshotConfig.swift in Sources */,
+				AA0004001234567890001CDE /* ScreenshotArrowView.swift in Sources */,
+				AA0006001234567890001CDE /* ScreenshotView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -232,12 +268,12 @@
 		213c1ef7f684452c84478b50 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7294Y62396;
 				ENABLE_PREVIEWS = NO;
+				"EXCLUDED_SOURCE_FILE_NAMES[arch=*]" = "bg-*.jpg";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Pointer AR";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
@@ -330,7 +366,6 @@
 		a1c50ec8dbb34eec831da115 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
