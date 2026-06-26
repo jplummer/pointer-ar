@@ -1,0 +1,12 @@
+devices([
+  "iPhone 16 Pro Max",
+  "iPhone SE (3rd generation)"
+])
+
+languages(["en-US"])
+
+scheme("PointerARScreenshotTests")
+
+output_directory("./fastlane/screenshots")
+output_simulator_logs(false)
+clear_previous_screenshots(true)
