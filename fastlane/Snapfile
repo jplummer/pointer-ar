@@ -5,7 +5,8 @@ devices([
 
 languages(["en-US"])
 
-scheme("PointerARScreenshotTests")
+scheme("Pointer")
+testplan("PointerARScreenshots")
 
 output_directory("./fastlane/screenshots")
 output_simulator_logs(false)

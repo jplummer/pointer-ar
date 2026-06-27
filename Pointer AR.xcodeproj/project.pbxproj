@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -41,6 +41,16 @@
 		fd8bd5a3f0e348a3b556a2cc /* GroundTargetsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99a388feac7e4150afe70c22 /* GroundTargetsModel.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		A67E00652FEF8082006AE87C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 724471a7ac164aee9fce8376 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 02813c7c8c4f4265813ecb90;
+			remoteInfo = "Pointer AR";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		32c42799b9f84466bb702a38 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		4ede4131ee0346bfa3948b96 /* GroundTargets.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = GroundTargets.json; sourceTree = "<group>"; };
@@ -58,6 +68,7 @@
 		A677C6EA2FED930F00635601 /* bg-golden-city.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "bg-golden-city.jpg"; sourceTree = "<group>"; };
 		A677C6EB2FED930F00635601 /* bg-hills-and-clouds.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "bg-hills-and-clouds.jpg"; sourceTree = "<group>"; };
 		A677C6EC2FED930F00635601 /* bg-rolling-hills.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "bg-rolling-hills.jpg"; sourceTree = "<group>"; };
+		A67E005F2FEF8082006AE87C /* PointerARScreenshotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PointerARScreenshotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA0001001234567890001CDE /* ScreenshotConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotConfig.swift; sourceTree = "<group>"; };
 		AA0003001234567890001CDE /* ScreenshotArrowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotArrowView.swift; sourceTree = "<group>"; };
 		AA0005001234567890001CDE /* ScreenshotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotView.swift; sourceTree = "<group>"; };
@@ -77,6 +88,10 @@
 		ffcd5b1871dd422ba7fa0e88 /* ArrowSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrowSceneView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		A67E00602FEF8082006AE87C /* PointerARScreenshotTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = PointerARScreenshotTests; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		9f22aa77268f4c9298319426 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -86,6 +101,13 @@
 				813122a26a2f47a099915d5b /* CoreMotion.framework in Frameworks */,
 				9ed99728c3c4479ba5289292 /* AVFoundation.framework in Frameworks */,
 				8701550f4d06448e9d0d3443 /* CoreLocation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A67E005C2FEF8082006AE87C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -128,6 +150,7 @@
 			isa = PBXGroup;
 			children = (
 				84c1fe7ca6c641d5826150eb /* Pointer AR.app */,
+				A67E005F2FEF8082006AE87C /* PointerARScreenshotTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -158,6 +181,7 @@
 			isa = PBXGroup;
 			children = (
 				3f81af90167e4b6f917d802f /* Pointer AR */,
+				A67E00602FEF8082006AE87C /* PointerARScreenshotTests */,
 				5df5823551a3418ca6967bbf /* Products */,
 				A638926C2F95A2D10097D72B /* Recovered References */,
 			);
@@ -183,6 +207,29 @@
 			productReference = 84c1fe7ca6c641d5826150eb /* Pointer AR.app */;
 			productType = "com.apple.product-type.application";
 		};
+		A67E005E2FEF8082006AE87C /* PointerARScreenshotTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A67E00692FEF8082006AE87C /* Build configuration list for PBXNativeTarget "PointerARScreenshotTests" */;
+			buildPhases = (
+				A67E005B2FEF8082006AE87C /* Sources */,
+				A67E005C2FEF8082006AE87C /* Frameworks */,
+				A67E005D2FEF8082006AE87C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A67E00662FEF8082006AE87C /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A67E00602FEF8082006AE87C /* PointerARScreenshotTests */,
+			);
+			name = PointerARScreenshotTests;
+			packageProductDependencies = (
+			);
+			productName = PointerARScreenshotTests;
+			productReference = A67E005F2FEF8082006AE87C /* PointerARScreenshotTests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -190,11 +237,15 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1640;
+				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2640;
 				TargetAttributes = {
 					02813c7c8c4f4265813ecb90 = {
 						CreatedOnToolsVersion = 16.4;
+					};
+					A67E005E2FEF8082006AE87C = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = 02813c7c8c4f4265813ecb90;
 					};
 				};
 			};
@@ -212,11 +263,19 @@
 			projectRoot = "";
 			targets = (
 				02813c7c8c4f4265813ecb90 /* Pointer AR */,
+				A67E005E2FEF8082006AE87C /* PointerARScreenshotTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		A67E005D2FEF8082006AE87C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		e69baa63454248f88cb05c2d /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -262,7 +321,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A67E005B2FEF8082006AE87C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A67E00662FEF8082006AE87C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 02813c7c8c4f4265813ecb90 /* Pointer AR */;
+			targetProxy = A67E00652FEF8082006AE87C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		213c1ef7f684452c84478b50 /* Release */ = {
@@ -363,6 +437,48 @@
 			};
 			name = Debug;
 		};
+		A67E00672FEF8082006AE87C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7294Y62396;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jonplummer.PointerARScreenshotTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Pointer AR";
+			};
+			name = Debug;
+		};
+		A67E00682FEF8082006AE87C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7294Y62396;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jonplummer.PointerARScreenshotTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Pointer AR";
+			};
+			name = Release;
+		};
 		a1c50ec8dbb34eec831da115 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -461,6 +577,15 @@
 			buildConfigurations = (
 				a1c50ec8dbb34eec831da115 /* Debug */,
 				213c1ef7f684452c84478b50 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A67E00692FEF8082006AE87C /* Build configuration list for PBXNativeTarget "PointerARScreenshotTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A67E00672FEF8082006AE87C /* Debug */,
+				A67E00682FEF8082006AE87C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

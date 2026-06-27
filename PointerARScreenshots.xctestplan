@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "EBBD0369-3446-4D18-9ACF-076F69B5A84E",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Pointer AR.xcodeproj",
+        "identifier" : "A67E005E2FEF8082006AE87C",
+        "name" : "PointerARScreenshotTests"
+      }
+    }
+  ],
+  "version" : 1
+}
