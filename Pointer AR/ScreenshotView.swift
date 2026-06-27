@@ -3,7 +3,19 @@ import SwiftUI
 
 struct ScreenshotView: View {
     let config: ScreenshotConfig
-    @StateObject private var session = AimSession()
+    @StateObject private var session: AimSession
+
+    init(config: ScreenshotConfig) {
+        self.config = config
+        // Pre-seed UserDefaults so AimSession starts with the correct target on
+        // its very first render — avoids a one-frame flash of the default (Sun)
+        // and eliminates the onAppear timing race across sequential UITest runs.
+        UserDefaults.standard.set(
+            config.targetPickableId,
+            forKey: "pointer.lastSelectedTarget"
+        )
+        _session = StateObject(wrappedValue: AimSession())
+    }
 
     var body: some View {
         ZStack {
@@ -19,8 +31,19 @@ struct ScreenshotView: View {
                 Color.indigo.ignoresSafeArea()
             }
 
-            ScreenshotArrowView(config: config)
-                .ignoresSafeArea()
+            // 3D compass + arrow — hidden for picker shot so the picker is the hero
+            // and the background photo reads clearly behind it.
+            if !config.showPicker {
+                ScreenshotArrowView(config: config)
+                    .ignoresSafeArea()
+            }
+
+            // Extra dim layer for picker shot: brings the background down so white
+            // picker text is legible even through the picker's semi-transparent card.
+            if config.showPicker {
+                Color.black.opacity(0.30)
+                    .ignoresSafeArea()
+            }
 
             VStack(spacing: 0) {
                 // Target picker — collapsed (shows target name) or expanded for picker shot
@@ -53,12 +76,6 @@ struct ScreenshotView: View {
             }
         }
         .onAppear {
-            // Select the correct target so the picker header shows the right name
-            if let t = session.celestialCatalog.first(where: { $0.displayName == config.targetName }) {
-                session.aimMode = .celestial(t)
-            } else if let t = session.groundCatalog.first(where: { $0.displayName == config.targetName }) {
-                session.aimMode = .ground(t)
-            }
             if config.showPicker {
                 session.pickerExpanded = true
             }

@@ -4,6 +4,7 @@ import simd
 struct ScreenshotConfig {
     var id: String
     var targetName: String        // must match CelestialTarget.displayName or GroundTarget.displayName
+    var targetPickableId: String  // pre-seeds AimSession via UserDefaults; format: "cel:<id>" or "ground:<id>"
     var azimuthDeg: Double        // degrees clockwise from north
     var elevationDeg: Double      // degrees above/below horizon
     var backgroundImage: String   // filename without extension, must match bg-*.jpg in bundle
@@ -21,12 +22,17 @@ struct ScreenshotConfig {
         ))
     }
 
-    /// Orientation for the SceneKit stabilized node, simulating the device held level
-    /// at deviceAzimuthDeg yaw. Equivalent to simd_inverse(deviceAttitude) in production.
+    /// Orientation for the SceneKit stabilized node.
+    /// Combines a yaw (device heading) with a ~65° pitch so the compass bezel
+    /// appears foreshortened as it would on a phone held in portrait, not face-on
+    /// as it would if the phone were lying flat.
     var stabilizationOrientation: simd_quatf {
-        let rad = Float(deviceAzimuthDeg) * .pi / 180
-        let device = simd_quaternion(rad, simd_float3(0, 0, 1))
-        return simd_inverse(device)
+        let azRad   = Float(deviceAzimuthDeg) * .pi / 180
+        let pitchRad: Float = 65 * .pi / 180
+        // xTrueNorthZVertical: X=north, Y=west, Z=up → east axis = -Y
+        let yaw   = simd_quaternion(azRad,    simd_float3(0,  0, 1))
+        let pitch = simd_quaternion(pitchRad, simd_float3(0, -1, 0))
+        return simd_inverse(simd_mul(yaw, pitch))
     }
 }
 
@@ -39,6 +45,7 @@ extension ScreenshotConfig {
         ScreenshotConfig(
             id: "01-iss",
             targetName: "International Space Station",
+            targetPickableId: "cel:orbit.iss",
             azimuthDeg: 247,
             elevationDeg: 35,
             backgroundImage: "bg-golden-city",
@@ -48,6 +55,7 @@ extension ScreenshotConfig {
         ScreenshotConfig(
             id: "02-moon",
             targetName: "Moon",
+            targetPickableId: "cel:sky.moon",
             azimuthDeg: 142,
             elevationDeg: 52,
             backgroundImage: "bg-hills-and-clouds",
@@ -57,6 +65,7 @@ extension ScreenshotConfig {
         ScreenshotConfig(
             id: "03-sydney",
             targetName: "Sydney Opera House",
+            targetPickableId: "ground:place.sydney_opera_house",
             azimuthDeg: 158,
             elevationDeg: -32,
             backgroundImage: "bg-rolling-hills",
@@ -66,9 +75,10 @@ extension ScreenshotConfig {
         ScreenshotConfig(
             id: "04-picker",
             targetName: "International Space Station",
+            targetPickableId: "cel:orbit.iss",
             azimuthDeg: 247,
             elevationDeg: 35,
-            backgroundImage: "bg-field-and-hills",
+            backgroundImage: "bg-golden-city",
             deviceAzimuthDeg: 330,
             showPicker: true
         ),
