@@ -29,9 +29,13 @@ struct ScreenshotConfig {
     var stabilizationOrientation: simd_quatf {
         let azRad   = Float(deviceAzimuthDeg) * .pi / 180
         let pitchRad: Float = 65 * .pi / 180
-        // xTrueNorthZVertical: X=north, Y=west, Z=up → east axis = -Y
-        let yaw   = simd_quaternion(azRad,    simd_float3(0,  0, 1))
-        let pitch = simd_quaternion(pitchRad, simd_float3(0, -1, 0))
+        // Pitch around –X so simd_inverse tilts the disc's vertical extent toward
+        // the camera, producing a horizontal ellipse (wider than tall) on a portrait
+        // screen — the correct appearance for a flat ground-plane disc viewed from
+        // a phone held upright.  (Rotating around –Y instead compresses the
+        // horizontal extent, which gives a vertical ellipse = landscape look.)
+        let yaw   = simd_quaternion(azRad,    simd_float3( 0, 0, 1))
+        let pitch = simd_quaternion(pitchRad, simd_float3(-1, 0, 0))
         return simd_inverse(simd_mul(yaw, pitch))
     }
 }
