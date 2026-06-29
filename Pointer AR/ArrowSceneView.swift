@@ -49,9 +49,16 @@ struct ArrowSceneView: UIViewRepresentable {
     view.scene = scene
     view.autoenablesDefaultLighting = true
 
+    // Capture coordinator early so the background handler can reset motion state.
+    let coordinator = context.coordinator
+
+    // On background: pause rendering. Reset motionStarted so the next sync() call
+    // restarts CMMotionManager — the OS stops delivering updates when the app is
+    // suspended, and without a restart the stabilized node stays frozen at its
+    // last known orientation, making the arrow appear missing on return.
     NotificationCenter.default.addObserver(
       forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main
-    ) { _ in view.isPlaying = false; view.sceneTime = 0 }
+    ) { [weak coordinator] _ in view.isPlaying = false; coordinator?.motionStarted = false }
     NotificationCenter.default.addObserver(
       forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main
     ) { _ in view.isPlaying = true }
@@ -76,7 +83,6 @@ struct ArrowSceneView: UIViewRepresentable {
     let arrow = Coordinator.buildArrowNode()
     stabilized.addChildNode(arrow)
 
-    let coordinator = context.coordinator
     coordinator.arrowNode = arrow
     coordinator.flatDiskSpinnerRoot = flatSpinner
     coordinator.horizonDiskRoot = horizon
@@ -143,7 +149,7 @@ struct ArrowSceneView: UIViewRepresentable {
     weak var stabilizedNode: SCNNode?
     var readyBinding: Binding<Bool>?
     private var postedFirstFrame = false
-    private var motionStarted = false
+    fileprivate var motionStarted = false
     private var hasReceivedAttitude = false
     private var lastPickableId: String?
     private var lastSpinnerDuration: Double = 1.0
