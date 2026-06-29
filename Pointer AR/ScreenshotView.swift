@@ -15,47 +15,27 @@ struct ScreenshotView: View {
     }
 
     var body: some View {
-        // ZStack is the full-screen canvas: photo → 3D overlay → optional dim.
-        // UI chrome (picker header, az/el) is added via safeAreaInset so it
-        // renders in a separate layer guaranteed to be above SceneKit's Metal
-        // rendering, which can bleed above SwiftUI ZStack siblings.
-        ZStack {
-            if let path = Bundle.main.path(forResource: config.backgroundImage, ofType: "jpg"),
-               let uiImage = UIImage(contentsOfFile: path) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
-            } else {
-                Color.indigo.ignoresSafeArea()
-            }
-
-            ScreenshotArrowView(config: config)
-                .ignoresSafeArea()
-
-            // Dim for picker shot so list text stays legible over the scene.
-            // Stacked on top of SceneKit, not in place of it, so disc and arrow
-            // remain visible through the open picker (matching the real app).
-            if config.showPicker {
-                Color.black.opacity(0.25)
-                    .ignoresSafeArea()
-            }
-        }
-        // Picker header — safeAreaInset renders above all ZStack layers
-        .safeAreaInset(edge: .top, spacing: 0) {
+        // VStack drives layout so SwiftUI applies safe-area insets, and the
+        // picker / readout always render in a SwiftUI CALayer that sits above
+        // the Metal layer produced by SceneKit. (In a ZStack, SceneKit's Metal
+        // output can bleed above SwiftUI siblings for certain stabilization
+        // orientations; moving SceneKit into .background avoids this entirely.)
+        VStack(spacing: 0) {
             Group {
                 if config.showPicker {
+                    // Live picker — pre-seeded via UserDefaults in init()
                     TargetPickerExpando(session: session)
                 } else {
+                    // Static header avoids AimSession timing races across
+                    // sequential UITest launches.
                     staticPickerHeader
                 }
             }
             .padding(.horizontal, 16)
             .padding(.top, 12)
-            .padding(.bottom, 4)
-        }
-        // Az/El readout — same treatment at the bottom
-        .safeAreaInset(edge: .bottom, spacing: 0) {
+
+            Spacer(minLength: 0)
+
             HStack(spacing: 18) {
                 Text("Az \(String(format: "%.0f°", config.azimuthDeg))")
                     .font(.subheadline.weight(.semibold).monospacedDigit())
@@ -75,6 +55,30 @@ struct ScreenshotView: View {
                     }
             }
             .padding(.bottom, 24)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        // Single background ZStack: photo → 3D scene → optional dim.
+        // All three are .ignoresSafeArea so the SceneKit view fills the
+        // full screen identically for every shot, keeping disc size and
+        // center position consistent regardless of picker header height.
+        .background {
+            ZStack {
+                if let path = Bundle.main.path(forResource: config.backgroundImage, ofType: "jpg"),
+                   let uiImage = UIImage(contentsOfFile: path) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                } else {
+                    Color.indigo
+                }
+
+                ScreenshotArrowView(config: config)
+
+                if config.showPicker {
+                    Color.black.opacity(0.25)
+                }
+            }
+            .ignoresSafeArea()
         }
         .onAppear {
             if config.showPicker {
