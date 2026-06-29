@@ -52,16 +52,16 @@ struct ArrowSceneView: UIViewRepresentable {
     // Capture coordinator early so the background handler can reset motion state.
     let coordinator = context.coordinator
 
-    // On background: pause rendering. Reset motionStarted so the next sync() call
-    // restarts CMMotionManager — the OS stops delivering updates when the app is
-    // suspended, and without a restart the stabilized node stays frozen at its
-    // last known orientation, making the arrow appear missing on return.
+    // On background: reset motionStarted so the next sync() call restarts
+    // CMMotionManager, which stops delivering updates when the app is suspended.
+    // We do NOT pause isPlaying here — toggling the SceneKit play state can leave
+    // the Metal render pipeline in a state where depth writes work but color output
+    // fails on resume (arrow invisible but still cutting holes in the disc). Since
+    // this app has no background modes, iOS suspends it immediately on background
+    // anyway, so isPlaying = false accomplishes nothing except creating the problem.
     NotificationCenter.default.addObserver(
       forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main
-    ) { [weak coordinator] _ in view.isPlaying = false; coordinator?.motionStarted = false }
-    NotificationCenter.default.addObserver(
-      forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main
-    ) { _ in view.isPlaying = true }
+    ) { [weak coordinator] _ in coordinator?.motionStarted = false }
     // Keep SceneKit advancing SCNActions; otherwise wait-spinner animation can appear frozen.
     view.isPlaying = true
 
