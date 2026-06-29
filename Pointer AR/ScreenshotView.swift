@@ -15,47 +15,45 @@ struct ScreenshotView: View {
     }
 
     var body: some View {
-        ZStack {
-            // Background photo + disc/arrow + optional dim, composited in one
-            // SCNRenderer pass and displayed as a plain UIImage — no Metal layer,
-            // no occlusion, no frame-placement drift.
-            ScreenshotArrowView(config: config)
-
-            // Picker chrome + az/el readout, always above the rendered layer
-            VStack(spacing: 0) {
-                Group {
-                    if config.showPicker {
-                        TargetPickerExpando(session: session)
-                    } else {
-                        staticPickerHeader
-                    }
+        // VStack as the layout root so safe-area insets position picker and
+        // az/el correctly. ScreenshotArrowView is UIImage-based (no Metal layer)
+        // so there is no occlusion risk from putting it in .background.
+        VStack(spacing: 0) {
+            Group {
+                if config.showPicker {
+                    TargetPickerExpando(session: session)
+                } else {
+                    staticPickerHeader
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 12)
-
-                Spacer(minLength: 0)
-
-                HStack(spacing: 18) {
-                    Text("Az \(String(format: "%.0f°", config.azimuthDeg))")
-                        .font(.subheadline.weight(.semibold).monospacedDigit())
-                        .foregroundStyle(.white)
-                    Text("El \(String(format: "%+.0f°", config.elevationDeg))")
-                        .font(.subheadline.weight(.semibold).monospacedDigit())
-                        .foregroundStyle(.white)
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
-                .background {
-                    Capsule(style: .continuous)
-                        .fill(Color.black.opacity(0.52))
-                        .overlay {
-                            Capsule(style: .continuous)
-                                .strokeBorder(Color.white.opacity(0.18), lineWidth: 1)
-                        }
-                }
-                .padding(.bottom, 24)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+
+            Spacer(minLength: 0)
+
+            HStack(spacing: 18) {
+                Text("Az \(String(format: "%.0f°", config.azimuthDeg))")
+                    .font(.subheadline.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(.white)
+                Text("El \(String(format: "%+.0f°", config.elevationDeg))")
+                    .font(.subheadline.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(.white)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background {
+                Capsule(style: .continuous)
+                    .fill(Color.black.opacity(0.52))
+                    .overlay {
+                        Capsule(style: .continuous)
+                            .strokeBorder(Color.white.opacity(0.18), lineWidth: 1)
+                    }
+            }
+            .padding(.bottom, 24)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background {
+            ScreenshotArrowView(config: config)
         }
         .onAppear {
             if config.showPicker {

@@ -70,9 +70,17 @@ struct ScreenshotArrowView: View {
             scene.background.contents = UIColor(red: 0.3, green: 0.2, blue: 0.7, alpha: 1)
         }
 
-        // Camera — identical to production
+        // Camera — FOV scaled so the disc spans the same point width on every device.
+        // Pro Max (932pt logical height) at 60° is the reference; shorter screens
+        // get a narrower FOV (zoom in) so the disc isn't dwarfed by extra height.
         let cameraNode = SCNNode()
-        cameraNode.camera = SCNCamera()
+        let cam = SCNCamera()
+        let refFOV = 60.0, refHeight = 932.0
+        cam.fieldOfView = CGFloat(
+            2.0 * atan(tan(refFOV / 2.0 * .pi / 180.0) * Double(pointSize.height) / refHeight)
+                * 180.0 / .pi
+        )
+        cameraNode.camera = cam
         cameraNode.position = SCNVector3(0, 0, 6)
         cameraNode.simdOrientation = simd_quatf(ix: 0, iy: 0, iz: 0, r: 1)
         scene.rootNode.addChildNode(cameraNode)
