@@ -81,7 +81,7 @@ extension ScreenshotConfig {
             targetPickableId: "cel:orbit.iss",
             azimuthDeg: 247,
             elevationDeg: 35,
-            backgroundImage: "bg-golden-city",
+            backgroundImage: "bg-field-and-hills",
             deviceAzimuthDeg: 330,
             showPicker: true
         ),
