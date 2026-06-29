@@ -15,70 +15,47 @@ struct ScreenshotView: View {
     }
 
     var body: some View {
-        // VStack drives layout so SwiftUI applies safe-area insets, and the
-        // picker / readout always render in a SwiftUI CALayer that sits above
-        // the Metal layer produced by SceneKit. (In a ZStack, SceneKit's Metal
-        // output can bleed above SwiftUI siblings for certain stabilization
-        // orientations; moving SceneKit into .background avoids this entirely.)
-        VStack(spacing: 0) {
-            Group {
-                if config.showPicker {
-                    // Live picker — pre-seeded via UserDefaults in init()
-                    TargetPickerExpando(session: session)
-                } else {
-                    // Static header avoids AimSession timing races across
-                    // sequential UITest launches.
-                    staticPickerHeader
-                }
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
+        ZStack {
+            // Background photo + disc/arrow + optional dim, composited in one
+            // SCNRenderer pass and displayed as a plain UIImage — no Metal layer,
+            // no occlusion, no frame-placement drift.
+            ScreenshotArrowView(config: config)
 
-            Spacer(minLength: 0)
-
-            HStack(spacing: 18) {
-                Text("Az \(String(format: "%.0f°", config.azimuthDeg))")
-                    .font(.subheadline.weight(.semibold).monospacedDigit())
-                    .foregroundStyle(.white)
-                Text("El \(String(format: "%+.0f°", config.elevationDeg))")
-                    .font(.subheadline.weight(.semibold).monospacedDigit())
-                    .foregroundStyle(.white)
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
-            .background {
-                Capsule(style: .continuous)
-                    .fill(Color.black.opacity(0.52))
-                    .overlay {
-                        Capsule(style: .continuous)
-                            .strokeBorder(Color.white.opacity(0.18), lineWidth: 1)
+            // Picker chrome + az/el readout, always above the rendered layer
+            VStack(spacing: 0) {
+                Group {
+                    if config.showPicker {
+                        TargetPickerExpando(session: session)
+                    } else {
+                        staticPickerHeader
                     }
-            }
-            .padding(.bottom, 24)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        // Single background ZStack: photo → 3D scene → optional dim.
-        // All three are .ignoresSafeArea so the SceneKit view fills the
-        // full screen identically for every shot, keeping disc size and
-        // center position consistent regardless of picker header height.
-        .background {
-            ZStack {
-                if let path = Bundle.main.path(forResource: config.backgroundImage, ofType: "jpg"),
-                   let uiImage = UIImage(contentsOfFile: path) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .scaledToFill()
-                } else {
-                    Color.indigo
                 }
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
 
-                ScreenshotArrowView(config: config)
+                Spacer(minLength: 0)
 
-                if config.showPicker {
-                    Color.black.opacity(0.25)
+                HStack(spacing: 18) {
+                    Text("Az \(String(format: "%.0f°", config.azimuthDeg))")
+                        .font(.subheadline.weight(.semibold).monospacedDigit())
+                        .foregroundStyle(.white)
+                    Text("El \(String(format: "%+.0f°", config.elevationDeg))")
+                        .font(.subheadline.weight(.semibold).monospacedDigit())
+                        .foregroundStyle(.white)
                 }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background {
+                    Capsule(style: .continuous)
+                        .fill(Color.black.opacity(0.52))
+                        .overlay {
+                            Capsule(style: .continuous)
+                                .strokeBorder(Color.white.opacity(0.18), lineWidth: 1)
+                        }
+                }
+                .padding(.bottom, 24)
             }
-            .ignoresSafeArea()
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
         .onAppear {
             if config.showPicker {
