@@ -37,7 +37,13 @@ struct CameraPreviewView: UIViewRepresentable {
 #endif
   }
 
-  func updateUIView(_ uiView: UIView, context: Context) {}
+  func updateUIView(_ uiView: UIView, context: Context) {
+#if !targetEnvironment(simulator)
+    // Re-check authorization on every update so returning from Settings (after granting
+    // camera access post-denial) resumes the session without needing a view recreation.
+    context.coordinator.configureIfAuthorized()
+#endif
+  }
 
   static func dismantleUIView(_ uiView: UIView, coordinator: Coordinator) {
 #if !targetEnvironment(simulator)
@@ -51,7 +57,18 @@ struct CameraPreviewView: UIViewRepresentable {
 
     init(previewRotation: PreviewRotationState) {
       self.previewRotation = previewRotation
+      // iOS force-stops the capture session on background (no background camera
+      // capability) and never restarts it automatically — including after a trip
+      // to Settings that doesn't itself change the authorization value, which
+      // means SwiftUI's updateUIView won't re-fire. Listen directly so return-to-
+      // foreground always re-checks authorization and resumes the session.
+      didBecomeActiveObserver = NotificationCenter.default.addObserver(
+        forName: UIApplication.didBecomeActiveNotification, object: nil, queue: .main
+      ) { [weak self] _ in
+        self?.configureIfAuthorized()
+      }
     }
+    private var didBecomeActiveObserver: NSObjectProtocol?
     weak var previewLayer: AVCaptureVideoPreviewLayer?
     weak var previewHost: PreviewHost?
     private var configured = false
@@ -219,6 +236,10 @@ struct CameraPreviewView: UIViewRepresentable {
     }
 
     func shutdown() {
+      if let observer = didBecomeActiveObserver {
+        NotificationCenter.default.removeObserver(observer)
+        didBecomeActiveObserver = nil
+      }
       DispatchQueue.global(qos: .userInitiated).async { [session] in
         if session.isRunning {
           session.stopRunning()

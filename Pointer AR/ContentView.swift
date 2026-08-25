@@ -54,6 +54,7 @@ struct ContentView: View {
   @State private var showBrandedCover = true
   @State private var cameraOpacity: Double = 0
   @State private var cameraPermissionResolved = false
+  @State private var cameraAuthorizationStatus: AVAuthorizationStatus = .notDetermined
   /// Debounces satellite ephemeris refetch when GPS moves; pointer math still uses the latest fix immediately.
   @State private var satellitePrefetchDebounceTask: Task<Void, Never>?
   @Environment(\.openURL) private var openURL
@@ -129,8 +130,12 @@ struct ContentView: View {
 
           Spacer(minLength: 0)
 
-          if waitReason == .denied && !showBrandedCover {
-            authDeniedPanel
+          if !showBrandedCover {
+            if cameraAuthorizationStatus == .denied || cameraAuthorizationStatus == .restricted {
+              cameraDeniedPanel
+            } else if waitReason == .denied {
+              authDeniedPanel
+            }
           }
 
           waitReasonLabel(waitReason)
@@ -159,6 +164,7 @@ struct ContentView: View {
       if cameraStatus == .notDetermined {
         _ = await AVCaptureDevice.requestAccess(for: .video)
       }
+      cameraAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
       cameraPermissionResolved = true
       location.begin()
       try? await Task.sleep(for: .seconds(0.3))
@@ -174,6 +180,7 @@ struct ContentView: View {
     .onChange(of: scenePhase) { _, phase in
       if phase == .active {
         location.begin()
+        cameraAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
       } else {
         location.stop()
       }
@@ -377,11 +384,25 @@ struct ContentView: View {
   }
 
   private var authDeniedPanel: some View {
+    permissionDeniedPanel(
+      iconName: "location.slash",
+      message: "Pointer needs your location to calculate direction. Open Settings and enable Location Services for this app."
+    )
+  }
+
+  private var cameraDeniedPanel: some View {
+    permissionDeniedPanel(
+      iconName: "video.slash",
+      message: "Pointer needs camera access to show the live view behind the arrow. Open Settings and enable Camera for this app."
+    )
+  }
+
+  private func permissionDeniedPanel(iconName: String, message: String) -> some View {
     VStack(spacing: 16) {
-      Image(systemName: "location.slash")
+      Image(systemName: iconName)
         .font(.title2)
         .foregroundStyle(.white.opacity(0.7))
-      Text("Pointer needs your location to calculate direction. Open Settings and enable Location Services for this app.")
+      Text(message)
         .font(.subheadline)
         .foregroundStyle(.white.opacity(0.9))
         .multilineTextAlignment(.center)

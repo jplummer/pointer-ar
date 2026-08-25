@@ -1,0 +1,11 @@
+Pointer AR overlays a 3D arrow on your camera view that points at whatever you pick, from wherever you're standing.
+
+Most compass apps just show north. Pointer AR computes real directions to things you can't picture on your own: the International Space Station orbiting overhead, the Moon's current position, the Sydney Opera House on the other side of the planet, magnetic north (it isn't the same as true north), or any of the Seven Wonders.
+
+• Live orbital tracking for satellites like the ISS
+• Real-time lunar position
+• Great-circle direction to any landmark in the catalog, even straight through the planet
+• A catalog of ancient wonders, cultural landmarks, and defined points like the Prime Meridian marker in Greenwich
+• Real geodesy and orbital mechanics behind every arrow
+
+Point it at the sky. Point it at the ground. See where "that way" actually is.
